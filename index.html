@@ -1,0 +1,3640 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TapFlow — Produza e venda placas NFC do zero</title>
+  <meta name="description"
+    content="O método completo pra produzir placas NFC em casa e fechar os primeiros clientes. Custo por placa a partir de R$ 8, venda a partir de R$ 90 — sem loja, sem estoque, sem funcionário.">
+  <meta name="theme-color" content="#05070B">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="TapFlow — Produza e venda placas NFC do zero">
+  <meta property="og:description"
+    content="Produza a placa por R$ 8 e venda por R$ 90. O passo a passo da produção e os scripts que trazem os primeiros clientes.">
+  <meta property="og:locale" content="pt_BR">
+
+  <link rel="icon" href="assets/favicon.svg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet">
+
+  <!-- ==========================================================================
+       TROCAR ANTES DE PUBLICAR
+
+       1. CHECKOUT — todo botão de compra carrega data-checkout-placeholder.
+          Busque por essa palavra no arquivo e troque o href pelo link real.
+       2. PROVA SOCIAL — depoimentos, cases e o bloco do especialista estão
+          marcados com PLACEHOLDER em comentário. Nunca publicar sem trocar
+          por depoimento real: prova social inventada é propaganda enganosa.
+       3. PIXEL / UTM — cole as tags no lugar indicado logo abaixo.
+       4. PRAZO DO LOTE — o data-deadline da faixa de urgência é a única data
+          do arquivo. O contador regressivo e a barra fixa de compra leem dali.
+       5. IMAGENS — os mockups em assets/images/ são espaços reservados.
+       ========================================================================== -->
+
+  <!-- Cole aqui o Meta Pixel / Google Ads / UTMify -->
+
+  <style>
+    /* ==========================================================================
+       Tokens
+       Estrutura e arquitetura de classes vindas do hyrox-page.
+       Pele (cores, tipografia, vidro, ruído) vinda do portfolio, com a
+       paleta TapFlow no lugar do verde original.
+       ========================================================================== */
+    :root {
+      /* Paleta TapFlow */
+      --preto: #05070B;
+      --marinho: #0B1630;
+      --azul: #146CFF;
+      --ciano: #00E5FF;
+      --branco: #F7F9FC;
+      --cinza: #A9B2C3;
+
+      /* Papéis */
+      --bg: var(--preto);
+      --bg-alt: #080C16;
+      --surface: var(--marinho);
+      --surface-glass: rgba(11, 22, 48, 0.55);
+      --surface-raised: rgba(20, 36, 74, 0.5);
+      --surface-sunken: rgba(3, 5, 10, 0.6);
+
+      --ink: var(--branco);
+      --ink-2: #DDE4EF;
+      --muted: var(--cinza);
+      --muted-2: #7E8A9C;
+
+      --azul-hover: #2E80FF;
+      --azul-escuro: #0B4FC4;
+      --azul-soft: rgba(20, 108, 255, 0.14);
+      --ciano-soft: rgba(0, 229, 255, 0.1);
+      --ciano-line: rgba(0, 229, 255, 0.3);
+
+      --line: rgba(169, 178, 195, 0.14);
+      --line-strong: rgba(169, 178, 195, 0.28);
+
+      --font-display: "Big Shoulders Display", "Arial Narrow", sans-serif;
+      --font-body: "IBM Plex Sans", system-ui, sans-serif;
+      --font-mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+
+      --container: 1180px;
+      --pad-inline: clamp(20px, 5vw, 64px);
+      --pad-section: clamp(64px, 9vw, 120px);
+      --radius: 16px;
+      --radius-lg: 24px;
+    }
+
+
+
+
+
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      /* O header fica fixo em 72px depois de rolar. Sem isto, toda âncora
+         entrega o título da seção escondido atrás dele. */
+      scroll-padding-top: 100px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      html,
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    body {
+      margin: 0;
+      background-color: var(--bg);
+      /* O ruído do portfolio: um tile de 200px por cima do preto. */
+      background-image: url("assets/noise.png");
+      background-size: 200px 200px;
+      background-position: 0 0;
+      color: var(--ink-2);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: var(--font-display);
+      color: var(--ink);
+      letter-spacing: -0.01em;
+      line-height: 1.02;
+    }
+
+    ::selection {
+      background: var(--ciano);
+      color: var(--preto);
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--ciano);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: var(--container);
+      margin-inline: auto;
+      padding-inline: var(--pad-inline);
+    }
+
+    .icon {
+      width: 1em;
+      height: 1em;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex: none;
+    }
+
+    /* ---- Texto recorrente ---- */
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ciano);
+      margin: 0 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 22px;
+      height: 1px;
+      background: var(--ciano);
+      opacity: 0.55;
+      flex: none;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 3.8vw, 3.3rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      line-height: 0.98;
+      margin: 0 0 16px;
+    }
+
+    .section-title em {
+      font-style: normal;
+      color: var(--ciano);
+    }
+
+    .lede {
+      font-size: clamp(16px, 1.6vw, 18px);
+      color: var(--muted);
+      margin: 0;
+      max-width: 62ch;
+    }
+
+    /* ---- Botões ---- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 15px 26px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn--primary {
+      background: var(--azul);
+      /* Branco puro, e nao o --branco (#F7F9FC): sobre o azul eletrico o
+         #F7F9FC da 4.31:1 e reprova no AA. O branco puro chega a 4.55:1. */
+      color: #fff;
+    }
+
+    .btn--primary:hover {
+      background: var(--azul-hover);
+      box-shadow: 0 12px 34px -12px rgba(20, 108, 255, 0.75);
+    }
+
+    /* O ciano é forte demais para um botão inteiro: fica no contorno e no
+       brilho, que é o papel dele na paleta. */
+    .btn--ghost {
+      background: transparent;
+      color: var(--ink);
+      border-color: var(--line-strong);
+    }
+
+    .btn--ghost:hover {
+      border-color: var(--ciano);
+      color: var(--ciano);
+      box-shadow: 0 0 24px -8px var(--ciano);
+    }
+
+    .btn--block {
+      display: flex;
+      width: 100%;
+    }
+
+    .btn .icon {
+      font-size: 18px;
+    }
+
+    /* ---- Revelação no scroll ---- */
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    [data-reveal].is-visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* No celular a revelação fica desligada: o custo de animar não se paga, e
+       o JS acompanha marcando tudo como visível de uma vez. */
+    @media (max-width: 900px) {
+      [data-reveal] {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+    }
+
+    /* ==========================================================================
+       Header
+       ========================================================================== */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 60;
+      padding: 18px 0;
+      transition: background 0.25s ease, padding 0.25s ease, border-color 0.25s ease;
+      border-bottom: 1px solid transparent;
+    }
+
+    .site-header.is-scrolled {
+      padding: 12px 0;
+      background: rgba(5, 7, 11, 0.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom-color: var(--line);
+    }
+
+    .site-header .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 11px;
+      text-decoration: none;
+    }
+
+    .brand__mark {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+      background: var(--surface);
+      border: 1px solid var(--ciano-line);
+      color: var(--ciano);
+      font-size: 20px;
+      transition: box-shadow 0.25s ease;
+    }
+
+    .brand:hover .brand__mark {
+      box-shadow: 0 0 22px -4px var(--ciano);
+    }
+
+    .brand__word {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .brand__word strong {
+      font-family: var(--font-display);
+      font-size: 19px;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+    }
+
+    .brand__word span {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+    }
+
+    .main-nav {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .main-nav__links {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .main-nav__links a {
+      position: relative;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .main-nav__links a:hover {
+      color: var(--ink);
+    }
+
+    .main-nav__links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -6px;
+      width: 0;
+      height: 1px;
+      background: var(--ciano);
+      transition: width 0.25s ease;
+    }
+
+    .main-nav__links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-toggle {
+      display: none;
+      width: 42px;
+      height: 42px;
+      align-items: center;
+      justify-content: center;
+      border-radius: 11px;
+      border: 1px solid var(--line);
+      background: var(--surface-glass);
+      color: var(--ink);
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .nav-toggle .icon--close,
+    .nav-toggle[aria-expanded="true"] .icon--menu {
+      display: none;
+    }
+
+    .nav-toggle[aria-expanded="true"] .icon--close {
+      display: block;
+    }
+
+    @media (max-width: 900px) {
+      .main-nav {
+        display: none;
+      }
+
+      .nav-toggle {
+        display: inline-flex;
+      }
+    }
+
+    .mobile-drawer {
+      position: fixed;
+      inset: 72px 0 auto;
+      z-index: 55;
+      background: rgba(5, 7, 11, 0.97);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--line);
+      transform: translateY(-120%);
+      transition: transform 0.3s ease;
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .mobile-drawer {
+        display: block;
+      }
+    }
+
+    .mobile-drawer.is-open {
+      transform: none;
+    }
+
+    .mobile-drawer ul {
+      list-style: none;
+      margin: 0;
+      padding: 18px var(--pad-inline) 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    /* O :not(.btn) importa: sem ele esta regra vence .btn--primary por
+       especificidade e repinta o texto do botao de #fff para --ink-2, que
+       sobre o azul cai para 3.55:1. */
+    .mobile-drawer ul a:not(.btn) {
+      display: block;
+      padding: 13px 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--ink-2);
+      text-decoration: none;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .mobile-drawer .btn {
+      margin-top: 18px;
+    }
+
+    /* ==========================================================================
+       Topo: so o hero, sob a grade
+       ========================================================================== */
+    .topo {
+      position: relative;
+      background-color: var(--bg);
+      /* A grade repete em vez de esticar: as bordas da imagem casam entre si,
+         entao as celulas ficam quadradas em qualquer largura, em vez de
+         deformarem num monitor ultrawide.
+         A camada de cima e um esmaecimento curto no fim do hero, so pra
+         imagem nao parecer cortada a faca na borda do bloco seguinte. */
+      background-image:
+        linear-gradient(180deg, transparent 86%, var(--bg) 100%),
+        url("assets/images/hero-grid.webp");
+      background-size: 100% 100%, 1672px 941px;
+      background-repeat: no-repeat, repeat;
+      background-position: center, center top;
+    }
+
+    .prova {
+      background: #03050A;
+      border-block: 1px solid var(--line);
+    }
+
+    /* ==========================================================================
+       Hero
+       ========================================================================== */
+    .hero {
+      position: relative;
+      padding: clamp(48px, 7vw, 86px) 0 clamp(46px, 7vw, 78px);
+      overflow: hidden;
+    }
+
+    /* O brilho do hero: dois halos, azul e ciano, atrás do conteúdo. */
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: -180px -10% auto;
+      height: 620px;
+      background:
+        radial-gradient(520px 320px at 22% 26%, rgba(20, 108, 255, 0.28), transparent 70%),
+        radial-gradient(420px 280px at 78% 12%, rgba(0, 229, 255, 0.16), transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero__grid {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: clamp(32px, 5vw, 64px);
+      align-items: center;
+    }
+
+    @media (max-width: 900px) {
+      .hero__grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .hero__heading {
+      font-size: clamp(2.7rem, 6.6vw, 5.2rem);
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 0.95;
+      margin: 0 0 20px;
+    }
+
+    .hero__heading em {
+      font-style: normal;
+      color: var(--ciano);
+      text-shadow: 0 0 40px rgba(0, 229, 255, 0.35);
+    }
+
+    .hero__desc {
+      font-size: clamp(16px, 1.8vw, 19px);
+      color: var(--muted);
+      margin: 0 0 26px;
+      max-width: 54ch;
+    }
+
+    .hero__for {
+      list-style: none;
+      margin: 0 0 30px;
+      padding: 0;
+      display: grid;
+      gap: 12px;
+      max-width: 54ch;
+    }
+
+    .hero__for li {
+      position: relative;
+      padding-left: 18px;
+      font-size: 15px;
+      color: var(--muted);
+      border-left: 2px solid var(--azul);
+      padding-block: 2px;
+    }
+
+    .hero__for b {
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .hero__actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .hero__scroll-hint {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--muted-2);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .hero__scroll-hint:hover {
+      color: var(--ciano);
+    }
+
+    /* ---- O cartão-placa do hero: a peça que está sendo vendida ---- */
+    .hero__visual {
+      position: relative;
+      display: grid;
+      place-items: center;
+      min-height: 380px;
+    }
+
+    .nfc-plate {
+      position: relative;
+      width: min(340px, 100%);
+      aspect-ratio: 3 / 4;
+      border-radius: 26px;
+      background:
+        linear-gradient(155deg, rgba(20, 108, 255, 0.22), transparent 42%),
+        linear-gradient(200deg, var(--marinho), #070B16);
+      border: 1px solid var(--ciano-line);
+      box-shadow:
+        0 40px 80px -30px rgba(0, 0, 0, 0.9),
+        0 0 60px -22px rgba(0, 229, 255, 0.5),
+        inset 0 1px 0 rgba(247, 249, 252, 0.08);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 30px;
+      text-align: center;
+      transform: rotate(-4deg);
+      transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .hero__visual:hover .nfc-plate {
+      transform: rotate(0deg) translateY(-6px);
+    }
+
+    .nfc-plate__brand {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+    }
+
+    .nfc-plate__disc {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 140px;
+      height: 140px;
+    }
+
+    .nfc-plate__wave {
+      width: 96px;
+      height: 96px;
+      color: var(--ciano);
+      filter: drop-shadow(0 0 16px rgba(0, 229, 255, 0.6));
+    }
+
+    .nfc-plate__label {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--ink);
+      margin: 0;
+    }
+
+    .nfc-plate__sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    /* As ondas que saem da placa, uma atrás da outra, imitando a aproximação
+       do celular. Puro CSS: três anéis com o mesmo keyframe e atrasos. */
+    .nfc-plate__pulse {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      pointer-events: none;
+    }
+
+    .nfc-plate__pulse i {
+      position: absolute;
+      width: 108px;
+      height: 108px;
+      border-radius: 50%;
+      border: 1px solid var(--ciano);
+      opacity: 0;
+      animation: nfc-ping 3s ease-out infinite;
+    }
+
+    .nfc-plate__pulse i:nth-child(2) {
+      animation-delay: 1s;
+    }
+
+    .nfc-plate__pulse i:nth-child(3) {
+      animation-delay: 2s;
+    }
+
+    @keyframes nfc-ping {
+      0% {
+        transform: scale(0.5);
+        opacity: 0.7;
+      }
+
+      100% {
+        transform: scale(2.1);
+        opacity: 0;
+      }
+    }
+
+    .hero__price-tag {
+      position: absolute;
+      right: -6px;
+      bottom: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 12px 18px;
+      border-radius: 14px;
+      background: var(--surface-glass);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--line-strong);
+      text-align: left;
+    }
+
+    .hero__price-tag b {
+      font-family: var(--font-display);
+      font-size: 20px;
+      color: var(--ciano);
+    }
+
+    .hero__price-tag span {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+    }
+
+    /* ==========================================================================
+       Splitbar — a esteira de nichos, no lugar das estações do hyrox
+       ========================================================================== */
+    .splitbar {
+      padding-block: clamp(28px, 4vw, 42px) 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .splitbar__label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+      margin: 0 0 16px;
+    }
+
+    .splitbar__scroller {
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+      mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    }
+
+    .splitbar__track {
+      display: flex;
+      width: max-content;
+      animation: splitbar-scroll 38s linear infinite;
+    }
+
+    .splitbar__scroller:hover .splitbar__track {
+      animation-play-state: paused;
+    }
+
+    @keyframes splitbar-scroll {
+      from {
+        transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(-50%);
+      }
+    }
+
+    .splitbar__seq {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding-right: 14px;
+    }
+
+    .station {
+      display: flex;
+      align-items: baseline;
+      gap: 9px;
+      padding: 9px 16px;
+      border-radius: 10px;
+      background: var(--surface-glass);
+      border: 1px solid var(--line);
+      white-space: nowrap;
+    }
+
+    .station__num {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--ciano);
+    }
+
+    .station__name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ink-2);
+    }
+
+    .station__meta {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--muted-2);
+    }
+
+    .run-tick {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+      white-space: nowrap;
+    }
+
+    .run-tick .icon {
+      font-size: 13px;
+      color: var(--azul);
+    }
+
+    /* ==========================================================================
+       Audience
+       ========================================================================== */
+    .audience {
+      padding-block: clamp(34px, 5vw, 54px);
+    }
+
+    .audience__label {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+      margin: 0 0 18px;
+    }
+
+    .audience__row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .audience__row span {
+      padding: 9px 15px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--surface-glass);
+      font-size: 14px;
+      color: var(--muted);
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .audience__row span:hover {
+      border-color: var(--ciano-line);
+      color: var(--ink);
+    }
+
+    /* Acima de 1180 os sete cabem numa linha so. Abaixo disso a faixa quebra,
+       e o caso feio nao e quebrar: e sobrar exatamente um item pendurado
+       sozinho na ultima linha. Apertar a pilula faz caber mais por linha e
+       tira o pendurado das larguras de tablet. */
+    @media (max-width: 1179px) {
+      .audience {
+        text-align: center;
+      }
+
+      .audience__row {
+        gap: 8px;
+        justify-content: center;
+      }
+
+      .audience__row span {
+        padding: 8px 12px;
+        font-size: 13.5px;
+      }
+    }
+
+    /* ==========================================================================
+       Seções genéricas
+       ========================================================================== */
+    .section {
+      padding-block: var(--pad-section);
+    }
+
+    .section--tight {
+      padding-block: clamp(40px, 6vw, 68px);
+    }
+
+    /* As duas variantes de fundo: o marinho para blocos de destaque, o
+       quase-preto para os blocos de respiro. Mesmo papel que paper-alt e
+       dark tinham no hyrox. */
+    .section--navy {
+      background: linear-gradient(180deg, var(--bg-alt), rgba(11, 22, 48, 0.55), var(--bg-alt));
+      border-block: 1px solid var(--line);
+    }
+
+    .section--deep {
+      background: #03050A;
+      border-block: 1px solid var(--line);
+    }
+
+    .section--light {
+      --ink: var(--preto);
+      --ink-2: #16202F;
+      --muted: #48505F;
+      --muted-2: #5C6678;
+      --surface-glass: rgba(255, 255, 255, 0.72);
+      --surface-raised: rgba(5, 7, 11, 0.05);
+      --surface-sunken: rgba(5, 7, 11, 0.045);
+      --line: rgba(5, 7, 11, 0.12);
+      --line-strong: rgba(5, 7, 11, 0.24);
+      --ciano: var(--azul-escuro);
+      --ciano-line: rgba(11, 79, 196, 0.26);
+      --ciano-soft: rgba(11, 79, 196, 0.08);
+
+      background-color: var(--branco);
+      /* O mesmo ruído do resto da página: o PNG tem 6,7% de alfa, então sobre
+         o branco ele texturiza de leve em vez de sujar. */
+      background-image: url("assets/noise.png");
+      background-size: 200px 200px;
+      color: #16202F;
+      border-block: 1px solid rgba(5, 7, 11, 0.1);
+    }
+
+    .section__head {
+      margin-bottom: clamp(32px, 4vw, 52px);
+      max-width: 70ch;
+    }
+
+    .section__head--center {
+      text-align: center;
+      margin-inline: auto;
+    }
+
+    .section__head--center .eyebrow {
+      justify-content: center;
+    }
+
+    .section__head--center .lede {
+      margin-inline: auto;
+    }
+
+    /* ---- Linha de confiança ---- */
+    .trust-line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 12.5px;
+      color: var(--muted-2);
+      margin: 14px 0 0;
+      text-align: center;
+    }
+
+    .trust-line .icon {
+      font-size: 15px;
+      color: var(--ciano);
+    }
+
+    /* ==========================================================================
+       Prova social em print (carrossel)
+       ========================================================================== */
+    .proofs__title {
+      font-size: clamp(1.5rem, 2.8vw, 2.1rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      margin: 0 0 26px;
+    }
+
+    .proofs__track {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 14px;
+      scrollbar-width: none;
+    }
+
+    .proofs__track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .proof {
+      flex: 0 0 min(300px, 78%);
+      scroll-snap-align: center;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--surface-glass);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .proof__head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .proof__avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--surface-raised);
+      border: 1px solid var(--ciano-line);
+      display: grid;
+      place-items: center;
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--ciano);
+    }
+
+    .proof__who {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      margin: 0;
+      line-height: 1.3;
+    }
+
+    .proof__when {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+      margin: 0;
+    }
+
+    .proof__text {
+      font-size: 14px;
+      color: var(--ink-2);
+      margin: 0;
+      line-height: 1.55;
+    }
+
+    .proof__meta {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--ciano);
+      margin: 0;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+
+    .proofs__nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .proofs__dot {
+      width: 7px;
+      height: 7px;
+      padding: 0;
+      border: 0;
+      border-radius: 50%;
+      background: var(--line-strong);
+      cursor: pointer;
+      transition: background 0.2s ease, width 0.2s ease;
+    }
+
+    .proofs__dot.is-active {
+      width: 22px;
+      border-radius: 999px;
+      background: var(--ciano);
+    }
+
+    /* ==========================================================================
+       Oferta
+       ========================================================================== */
+    .offer-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    @media (max-width: 860px) {
+      .offer-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .offer-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 26px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      background: var(--surface-glass);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: border-color 0.25s ease, transform 0.25s ease;
+    }
+
+    .offer-card:hover {
+      border-color: var(--line-strong);
+      transform: translateY(-3px);
+    }
+
+    .offer-card--featured {
+      border-color: var(--ciano-line);
+      background: linear-gradient(180deg, rgba(20, 108, 255, 0.1), var(--surface-glass) 46%);
+      box-shadow: 0 0 60px -30px var(--ciano);
+    }
+
+    .offer-card__badge {
+      position: absolute;
+      top: -12px;
+      left: 26px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: var(--azul-escuro);
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .offer-card__media {
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--surface-raised);
+      margin-bottom: 20px;
+      aspect-ratio: 16 / 10;
+      display: grid;
+      place-items: center;
+    }
+
+    .offer-card__media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+
+    .offer-card:hover .offer-card__media img {
+      transform: scale(1.04);
+    }
+
+    /* Espaço reservado enquanto não há mockup: mostra o nome do material em
+       vez de um retângulo vazio ou de um ícone de imagem quebrada. */
+    .media-holder {
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      gap: 8px;
+      text-align: center;
+      padding: 18px;
+      background:
+        radial-gradient(300px 160px at 50% 0%, rgba(20, 108, 255, 0.2), transparent 70%),
+        var(--surface-raised);
+      color: var(--muted-2);
+    }
+
+    .media-holder .icon {
+      font-size: 30px;
+      color: var(--ciano);
+    }
+
+    .media-holder span {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .offer-card__label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ciano);
+      margin: 0 0 8px;
+    }
+
+    .offer-card__title {
+      font-size: clamp(1.6rem, 2.8vw, 2rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      line-height: 1;
+      margin: 0 0 6px;
+    }
+
+    .offer-card__subtitle {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--muted-2);
+      margin: 0 0 18px;
+    }
+
+    .offer-card__price {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 10px;
+      padding-bottom: 18px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .offer-card__price .amount {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--ink);
+      line-height: 1;
+    }
+
+    .offer-card__price .terms {
+      font-size: 13px;
+      color: var(--muted-2);
+    }
+
+    .offer-card__per {
+      width: 100%;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--ciano);
+    }
+
+    .offer-card__desc {
+      font-size: 15px;
+      color: var(--muted);
+      margin: 0 0 18px;
+    }
+
+    .offer-card__bullets {
+      list-style: none;
+      margin: 0 0 22px;
+      padding: 0;
+      display: grid;
+      gap: 11px;
+    }
+
+    .offer-card__bullets li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14.5px;
+      color: var(--ink-2);
+      line-height: 1.45;
+    }
+
+    .offer-card__bullets .icon {
+      font-size: 17px;
+      color: var(--ciano);
+      margin-top: 2px;
+    }
+
+    .offer-card__group {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+      padding-top: 10px;
+    }
+
+    .offer-card__group:not(:first-child) {
+      border-top: 1px solid var(--line);
+    }
+
+    /* Lista longa: no celular ela nasce cortada e o botão abaixo abre. */
+    .offer-card__bullets--collapsible {
+      overflow: hidden;
+    }
+
+    @media (max-width: 860px) {
+      .offer-card__bullets--collapsible {
+        max-height: 250px;
+        -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent);
+        mask-image: linear-gradient(180deg, #000 60%, transparent);
+      }
+
+      .offer-card__bullets--collapsible.is-open {
+        max-height: none;
+        -webkit-mask-image: none;
+        mask-image: none;
+      }
+    }
+
+    .offer-card__more {
+      display: none;
+      width: 100%;
+      margin-bottom: 18px;
+      padding: 11px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: transparent;
+      color: var(--ciano);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 860px) {
+      .offer-card__more {
+        display: block;
+      }
+    }
+
+    .offer-card .trust-line {
+      margin-top: 14px;
+    }
+
+    /* ---- Pacote completo ---- */
+    .offer-bundle {
+      position: relative;
+      margin-top: 26px;
+      padding: clamp(26px, 4vw, 44px);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--ciano-line);
+      background:
+        radial-gradient(700px 320px at 15% 0%, rgba(20, 108, 255, 0.18), transparent 70%),
+        var(--surface-glass);
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: clamp(26px, 4vw, 48px);
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .offer-bundle {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .offer-bundle__urgency-bar {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 18px 26px;
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .offer-bundle__urgency-bar[hidden] {
+      display: none;
+    }
+
+    .offer-bundle__urgency-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 15px;
+      border-radius: 999px;
+      background: var(--azul-soft);
+      border: 1px solid var(--ciano-line);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ciano);
+    }
+
+    .offer-bundle__pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--ciano);
+      box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.7);
+      animation: dot-pulse 2s infinite;
+    }
+
+    @keyframes dot-pulse {
+      70% {
+        box-shadow: 0 0 0 9px rgba(0, 229, 255, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(0, 229, 255, 0);
+      }
+    }
+
+    .bundle-countdown {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .bundle-countdown__label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+    }
+
+    .bundle-countdown__slots {
+      display: flex;
+      gap: 7px;
+    }
+
+    .bundle-countdown__slot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 46px;
+      padding: 7px 6px;
+      border-radius: 9px;
+      background: var(--surface-raised);
+      border: 1px solid var(--line);
+    }
+
+    .bundle-countdown__slot b {
+      font-family: var(--font-mono);
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .bundle-countdown__slot i {
+      font-style: normal;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+    }
+
+    .bundle-slots {
+      min-width: 190px;
+      flex: 1;
+    }
+
+    .bundle-slots__text {
+      font-size: 12.5px;
+      color: var(--muted);
+      margin: 0 0 7px;
+    }
+
+    .bundle-slots__text strong {
+      color: var(--ciano);
+    }
+
+    .bundle-slots__meter {
+      display: block;
+      height: 5px;
+      border-radius: 999px;
+      background: var(--surface-raised);
+      overflow: hidden;
+    }
+
+    .bundle-slots__meter i {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--azul), var(--ciano));
+      transition: width 0.4s ease;
+    }
+
+    .offer-bundle__title {
+      font-size: clamp(1.7rem, 3.4vw, 2.5rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      line-height: 1;
+      margin: 0 0 12px;
+    }
+
+    .offer-bundle__desc {
+      font-size: 15.5px;
+      color: var(--muted);
+      margin: 0 0 22px;
+    }
+
+    .offer-bundle__bullets {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 12px;
+    }
+
+    .offer-bundle__bullets li {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      font-size: 15px;
+      color: var(--ink-2);
+    }
+
+    .offer-bundle__bullets strong {
+      color: var(--ink);
+    }
+
+    .offer-bundle__bullets .icon {
+      font-size: 18px;
+      color: var(--ciano);
+      margin-top: 2px;
+    }
+
+    .offer-bundle__buy {
+      padding: 26px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line-strong);
+      background: var(--surface-sunken);
+      text-align: center;
+      position: sticky;
+      top: 100px;
+    }
+
+    @media (max-width: 900px) {
+      .offer-bundle__buy {
+        position: static;
+      }
+    }
+
+    .offer-bundle__buy-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+      margin: 0 0 14px;
+    }
+
+    .offer-bundle__price .was {
+      display: block;
+      font-size: 13px;
+      color: var(--muted-2);
+      margin-bottom: 4px;
+    }
+
+    .offer-bundle__price .amount {
+      display: block;
+      font-family: var(--font-display);
+      font-size: clamp(40px, 6vw, 54px);
+      font-weight: 800;
+      color: var(--ink);
+      line-height: 1;
+    }
+
+    .offer-bundle__price .terms {
+      display: block;
+      font-size: 13px;
+      color: var(--muted-2);
+      margin-top: 6px;
+    }
+
+    .offer-bundle__price .per {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--ciano);
+      margin-top: 8px;
+    }
+
+    .offer-bundle .btn--bundle {
+      margin-top: 22px;
+      /* O gradiente antes terminava em #0AA7E0: branco sobre aquele ciano
+         claro cai para 2.76:1. Ficando na faixa azul, o pior ponto da barra
+         ainda da 4.55:1. */
+      background: linear-gradient(100deg, var(--azul-escuro), var(--azul));
+      color: #fff;
+    }
+
+    .offer-bundle .btn--bundle:hover {
+      box-shadow: 0 14px 40px -14px var(--ciano);
+    }
+
+    .bundle-stack {
+      margin-top: 26px;
+    }
+
+    .bundle-stack__label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+      margin: 0 0 12px;
+    }
+
+    .bundle-stack__row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 560px) {
+      .bundle-stack__row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .bundle-stack__item {
+      margin: 0;
+      padding: 14px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--surface-raised);
+      text-align: center;
+      display: grid;
+      gap: 8px;
+      justify-items: center;
+    }
+
+    .bundle-stack__item .icon {
+      font-size: 22px;
+      color: var(--ciano);
+    }
+
+    .bundle-stack__item figcaption {
+      font-size: 11.5px;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    /* ==========================================================================
+       Resultados (stats)
+       ========================================================================== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+
+    @media (max-width: 860px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .stat {
+      padding: 26px 22px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--surface-glass);
+      transition: border-color 0.25s ease;
+    }
+
+    .stat:hover {
+      border-color: var(--ciano-line);
+    }
+
+    .stat__num {
+      display: block;
+      font-family: var(--font-display);
+      font-size: clamp(34px, 4.4vw, 46px);
+      font-weight: 800;
+      line-height: 1;
+      color: var(--ciano);
+      margin-bottom: 10px;
+    }
+
+    .stat__desc {
+      font-size: 14px;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    /* ==========================================================================
+       Passo a passo (por dentro do método)
+       ========================================================================== */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      counter-reset: step;
+    }
+
+    @media (max-width: 900px) {
+      .steps {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .step {
+      position: relative;
+      padding: 28px 24px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--surface-glass);
+      counter-increment: step;
+      transition: border-color 0.25s ease, transform 0.25s ease;
+    }
+
+    .step:hover {
+      border-color: var(--ciano-line);
+      transform: translateY(-3px);
+    }
+
+    .step::before {
+      content: counter(step, decimal-leading-zero);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--ciano);
+    }
+
+    .step__title {
+      font-size: 1.45rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      line-height: 1;
+      margin: 12px 0 10px;
+    }
+
+    .step__desc {
+      font-size: 14.5px;
+      color: var(--muted);
+      margin: 0 0 16px;
+    }
+
+    .step__list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 9px;
+    }
+
+    .step__list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      font-size: 13.5px;
+      color: var(--ink-2);
+    }
+
+    .step__list .icon {
+      font-size: 15px;
+      color: var(--azul);
+      margin-top: 3px;
+    }
+
+    /* ==========================================================================
+       Faixa de CTA
+       ========================================================================== */
+    .cta-strip {
+      padding: clamp(28px, 4vw, 44px);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--line);
+      background:
+        radial-gradient(600px 240px at 50% 0%, rgba(20, 108, 255, 0.18), transparent 70%),
+        var(--surface-glass);
+      text-align: center;
+    }
+
+    .cta-strip .eyebrow {
+      justify-content: center;
+    }
+
+    .cta-strip__title {
+      font-size: clamp(1.6rem, 3.4vw, 2.5rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      line-height: 1;
+      margin: 0 0 24px;
+      max-width: 26ch;
+      margin-inline: auto;
+    }
+
+    .cta-strip__actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    /* ==========================================================================
+       Especialista
+       ========================================================================== */
+    .expert__grid {
+      display: grid;
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: clamp(26px, 4vw, 52px);
+      align-items: center;
+    }
+
+    @media (max-width: 860px) {
+      .expert__grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .expert__media {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: var(--surface-raised);
+      aspect-ratio: 4 / 5;
+    }
+
+    .expert__name {
+      font-size: clamp(1.7rem, 3.2vw, 2.4rem);
+      font-weight: 800;
+      text-transform: uppercase;
+      line-height: 1;
+      margin: 0 0 6px;
+    }
+
+    .expert__role {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ciano);
+      margin: 0 0 18px;
+    }
+
+    .expert__bio {
+      font-size: 15.5px;
+      color: var(--muted);
+      margin: 0 0 20px;
+    }
+
+    .expert__creds {
+      list-style: none;
+      margin: 0 0 22px;
+      padding: 0;
+      display: grid;
+      gap: 10px;
+    }
+
+    .expert__creds li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14.5px;
+      color: var(--ink-2);
+    }
+
+    .expert__creds .icon {
+      font-size: 17px;
+      color: var(--ciano);
+      margin-top: 2px;
+    }
+
+    .expert__quote {
+      padding-left: 18px;
+      border-left: 2px solid var(--azul);
+      font-size: 16px;
+      font-style: italic;
+      color: var(--ink);
+      margin: 0;
+    }
+
+    /* ==========================================================================
+       Cases
+       ========================================================================== */
+    .case {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: clamp(24px, 4vw, 48px);
+      align-items: center;
+      padding-block: clamp(30px, 4vw, 48px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .case:last-of-type {
+      border-bottom: 0;
+    }
+
+    @media (max-width: 860px) {
+      .case {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .case--reverse .case__copy {
+      order: 2;
+    }
+
+    @media (max-width: 860px) {
+      .case--reverse .case__copy {
+        order: 0;
+      }
+    }
+
+    .case__avatar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      margin-bottom: 18px;
+    }
+
+    .case__avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 1px solid var(--ciano-line);
+      background: var(--surface-raised);
+      display: grid;
+      place-items: center;
+      font-family: var(--font-display);
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--ciano);
+    }
+
+    .case__name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--ink);
+      margin: 0;
+    }
+
+    .case__quote {
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 2.8vw, 2rem);
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.08;
+      margin: 0 0 14px;
+    }
+
+    .case__desc {
+      font-size: 15px;
+      color: var(--muted);
+      margin: 0 0 18px;
+    }
+
+    .case__bullets {
+      list-style: none;
+      margin: 0 0 18px;
+      padding: 0;
+      display: grid;
+      gap: 9px;
+    }
+
+    .case__bullets li {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      font-size: 14px;
+      color: var(--ink-2);
+    }
+
+    .case__bullets .icon {
+      font-size: 16px;
+      color: var(--ciano);
+      margin-top: 2px;
+    }
+
+    .case__link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--ciano);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s ease;
+    }
+
+    .case__link:hover {
+      border-bottom-color: var(--ciano);
+    }
+
+    .case__card {
+      padding: 24px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--surface-glass);
+      display: grid;
+      gap: 14px;
+    }
+
+    .case__card-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+      margin: 0;
+    }
+
+    .case__metrics {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    .case__metric {
+      padding: 16px;
+      border-radius: 12px;
+      background: var(--surface-raised);
+      border: 1px solid var(--line);
+    }
+
+    .case__metric b {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--ciano);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .case__metric span {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    /* ==========================================================================
+       FAQ
+       ========================================================================== */
+    .faq-list {
+      display: grid;
+      gap: 12px;
+      max-width: 860px;
+      margin-inline: auto;
+    }
+
+    .faq-item {
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--surface-glass);
+      overflow: hidden;
+      transition: border-color 0.2s ease;
+    }
+
+    .faq-item[open] {
+      border-color: var(--ciano-line);
+    }
+
+    .faq-item summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 20px 22px;
+      font-family: var(--font-body);
+      font-size: 16.5px;
+      font-weight: 600;
+      color: var(--ink);
+      cursor: pointer;
+      list-style: none;
+    }
+
+    .faq-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq-item__toggle {
+      display: grid;
+      place-items: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid var(--line-strong);
+      color: var(--ciano);
+      font-size: 14px;
+      flex: none;
+      transition: transform 0.25s ease, border-color 0.2s ease;
+    }
+
+    .faq-item[open] .faq-item__toggle {
+      transform: rotate(45deg);
+      border-color: var(--ciano);
+    }
+
+    .faq-item p {
+      margin: 0;
+      padding: 0 22px 22px;
+      font-size: 15px;
+      color: var(--muted);
+    }
+
+    /* ==========================================================================
+       CTA final
+       ========================================================================== */
+    .cta-section {
+      text-align: center;
+    }
+
+    .cta-section .eyebrow {
+      justify-content: center;
+    }
+
+    .cta-section__actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 28px;
+    }
+
+    /* ==========================================================================
+       Barra fixa de compra (só no celular)
+       ========================================================================== */
+    .buybar {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 70;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px var(--pad-inline);
+      padding-bottom: calc(12px + env(safe-area-inset-bottom));
+      background: rgba(5, 7, 11, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-top: 1px solid var(--ciano-line);
+      transform: translateY(110%);
+      transition: transform 0.3s ease;
+    }
+
+    @media (max-width: 900px) {
+      .buybar {
+        display: flex;
+      }
+
+      body {
+        padding-bottom: 76px;
+      }
+    }
+
+    .buybar.is-visible {
+      transform: none;
+    }
+
+    .buybar__info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .buybar__name {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted-2);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .buybar__price {
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+
+    .buybar__price em {
+      font-style: normal;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--ciano);
+    }
+
+    .buybar__btn {
+      flex: none;
+      padding: 13px 20px;
+      font-size: 14px;
+    }
+
+    /* ==========================================================================
+       Rodapé
+       ========================================================================== */
+    .site-footer {
+      border-top: 1px solid var(--line);
+      padding-block: 44px;
+      background: #03050A;
+    }
+
+    .site-footer .container {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .site-footer p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--muted-2);
+      max-width: 56ch;
+    }
+
+    .site-footer__links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .site-footer__links a {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+    }
+
+    .site-footer__links a:hover {
+      color: var(--ciano);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Sprite de ícones: um só <svg> escondido, cada ícone usado depois com
+       <use href="#icon-x">. Evita 15 requisições e mantém o traço herdando
+       currentColor. -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <symbol id="icon-check" viewBox="0 0 24 24">
+      <path d="M20 6 9 17l-5-5" />
+    </symbol>
+    <symbol id="icon-plus" viewBox="0 0 24 24">
+      <path d="M12 5v14M5 12h14" />
+    </symbol>
+    <symbol id="icon-menu" viewBox="0 0 24 24">
+      <path d="M4 7h16M4 12h16M4 17h16" />
+    </symbol>
+    <symbol id="icon-close" viewBox="0 0 24 24">
+      <path d="M6 6l12 12M18 6L6 18" />
+    </symbol>
+    <symbol id="icon-shield" viewBox="0 0 24 24">
+      <path d="M12 3l7 3v5c0 4.6-3 8.4-7 10-4-1.6-7-5.4-7-10V6l7-3z" />
+      <path d="M9 12l2 2 4-4" />
+    </symbol>
+    <symbol id="icon-whatsapp" viewBox="0 0 24 24">
+      <path d="M21 12a9 9 0 0 1-13.3 7.9L3 21l1.2-4.6A9 9 0 1 1 21 12z" />
+      <path d="M8.6 9.2c0 3.2 2.9 6 6 6 .6 0 1.1-.4 1.3-.9l.2-.6-2-1-.7.8a5 5 0 0 1-2.2-2.2l.8-.7-1-2-.6.2c-.5.2-.9.7-.9 1.3z" />
+    </symbol>
+    <symbol id="icon-nfc" viewBox="0 0 24 24">
+      <path d="M5.5 7.5a7 7 0 0 0 0 9" />
+      <path d="M8.8 9.6a3.5 3.5 0 0 0 0 4.8" />
+      <path d="M18.5 7.5a7 7 0 0 1 0 9" />
+      <path d="M15.2 9.6a3.5 3.5 0 0 1 0 4.8" />
+      <circle cx="12" cy="12" r="1.4" />
+    </symbol>
+    <symbol id="icon-arrow" viewBox="0 0 24 24">
+      <path d="M5 12h14M13 6l6 6-6 6" />
+    </symbol>
+    <symbol id="icon-file" viewBox="0 0 24 24">
+      <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5z" />
+      <path d="M14 3v5h5M9 13h6M9 17h4" />
+    </symbol>
+    <symbol id="icon-tag" viewBox="0 0 24 24">
+      <path d="M20.6 13.4 12 22l-9-9V4a1 1 0 0 1 1-1h9l7.6 7.6a2 2 0 0 1 0 2.8z" />
+      <circle cx="7.5" cy="7.5" r="1.2" />
+    </symbol>
+    <symbol id="icon-chat" viewBox="0 0 24 24">
+      <path d="M21 11.5a8.4 8.4 0 0 1-9 8.4L3 21l1.2-4.6A8.4 8.4 0 1 1 21 11.5z" />
+      <path d="M8.5 11.5h7M8.5 14.5h4" />
+    </symbol>
+    <symbol id="icon-tool" viewBox="0 0 24 24">
+      <path d="M15 4.5a4.5 4.5 0 0 0-5.9 5.6L4 15.2 8.8 20l5.1-5.1A4.5 4.5 0 0 0 19.5 9l-2.6 2.6-2.5-2.5L17 6.5z" />
+    </symbol>
+    <symbol id="icon-target" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8.5" />
+      <circle cx="12" cy="12" r="4.5" />
+      <circle cx="12" cy="12" r="1" />
+    </symbol>
+    <symbol id="icon-store" viewBox="0 0 24 24">
+      <path d="M4 9h16v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9z" />
+      <path d="M3.5 9 5 4h14l1.5 5M10 20v-5h4v5" />
+    </symbol>
+    <symbol id="icon-zap" viewBox="0 0 24 24">
+      <path d="M13 3 5 14h6l-1 7 8-11h-6l1-7z" />
+    </symbol>
+    <symbol id="icon-image" viewBox="0 0 24 24">
+      <rect x="3.5" y="4.5" width="17" height="15" rx="2" />
+      <circle cx="9" cy="10" r="1.6" />
+      <path d="m4 17 5-4.5 4.5 4 2.5-2 4 3.5" />
+    </symbol>
+  </svg>
+
+  <header class="site-header" id="siteHeader">
+    <div class="container">
+      <a href="#top" class="brand">
+        <span class="brand__mark"><svg class="icon">
+            <use href="#icon-nfc" />
+          </svg></span>
+        <span class="brand__word">
+          <strong>TapFlow</strong>
+          <span>Placas NFC</span>
+        </span>
+      </a>
+
+      <nav class="main-nav">
+        <ul class="main-nav__links">
+          <li><a href="#metodo">O método</a></li>
+          <li><a href="#resultados">Números</a></li>
+          <li><a href="#cases">Alunos</a></li>
+          <li><a href="#faq">Dúvidas</a></li>
+        </ul>
+        <a href="#oferta" class="btn btn--primary">Quero começar</a>
+      </nav>
+
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false"
+        aria-controls="mobileDrawer">
+        <svg class="icon icon--menu">
+          <use href="#icon-menu" />
+        </svg>
+        <svg class="icon icon--close">
+          <use href="#icon-close" />
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="mobile-drawer" id="mobileDrawer">
+    <ul>
+      <li><a href="#metodo">O método</a></li>
+      <li><a href="#resultados">Números</a></li>
+      <li><a href="#cases">Alunos</a></li>
+      <li><a href="#faq">Dúvidas</a></li>
+      <li><a href="#oferta" class="btn btn--primary btn--block">Quero começar</a></li>
+    </ul>
+  </div>
+
+  <main id="top">
+
+    <!-- A grade cobre so o hero. Esteira, faixa de publico e depoimentos
+         ficam fora dela, num bloco escuro proprio. -->
+    <div class="topo">
+
+    <section class="hero">
+      <div class="container hero__grid">
+        <div class="hero__content">
+          <p class="eyebrow">Produção + venda · método completo</p>
+          <h1 class="hero__heading">Uma placa que custa R$ 8 e <em>sai por R$ 90.</em></h1>
+          <p class="hero__desc">O passo a passo pra produzir placas NFC em casa com menos de R$ 300 de
+            equipamento — e os scripts de abordagem que fecham os primeiros dez clientes. Sem loja, sem estoque,
+            sem funcionário.</p>
+          <ul class="hero__for">
+            <li><b>Começando do zero?</b> Da compra da tag até a primeira placa pronta na sua mão, em um fim de
+              semana.</li>
+            <li><b>Já vende para comércios?</b> Um produto novo de margem alta pra oferecer na base que você já
+              tem.</li>
+          </ul>
+          <div class="hero__actions">
+            <a href="#oferta" class="btn btn--primary">Quero produzir minha primeira placa</a>
+            <a href="#metodo" class="hero__scroll-hint">Ver o que tem dentro ↓</a>
+          </div>
+        </div>
+
+        <div class="hero__visual">
+          <div class="nfc-plate">
+            <span class="nfc-plate__brand">Aproxime o celular</span>
+            <div class="nfc-plate__disc">
+              <div class="nfc-plate__pulse" aria-hidden="true"><i></i><i></i><i></i></div>
+              <svg class="nfc-plate__wave icon" aria-hidden="true">
+                <use href="#icon-nfc" />
+              </svg>
+            </div>
+            <p class="nfc-plate__label">Avalie no Google</p>
+            <p class="nfc-plate__sub">Um toque · sem app · sem câmera</p>
+          </div>
+          <div class="hero__price-tag">
+            <b>11x</b>
+            <span>margem por placa</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    </div>
+
+    <!-- Esteira, faixa de publico e depoimentos sao um bloco visual so.
+         Ficam sob o mesmo elemento para dividirem um fundo continuo: com
+         fundo declarado em cada uma, a borda de uma encostaria na da outra e
+         apareceria risco duplo no meio do bloco. -->
+    <div class="prova">
+
+      <div class="container splitbar">
+        <p class="splitbar__label">Os comércios que já compram placa NFC na sua cidade</p>
+        <div class="splitbar__scroller">
+          <div class="splitbar__track">
+            <div class="splitbar__seq">
+              <div class="station"><span class="station__num">01</span><span
+                  class="station__name">Restaurante</span><span class="station__meta">CARDÁPIO</span></div>
+              <div class="run-tick"><svg class="icon">
+                  <use href="#icon-zap" />
+                </svg>1 TOQUE</div>
+              <div class="station"><span class="station__num">02</span><span class="station__name">Barbearia</span><span
+                  class="station__meta">AGENDAMENTO</span></div>
+              <div class="run-tick"><svg class="icon">
+                  <use href="#icon-zap" />
+                </svg>1 TOQUE</div>
+              <div class="station"><span class="station__num">03</span><span class="station__name">Imobiliária</span><span
+                  class="station__meta">TOUR DO IMÓVEL</span></div>
+              <div class="run-tick"><svg class="icon">
+                  <use href="#icon-zap" />
+                </svg>1 TOQUE</div>
+              <div class="station"><span class="station__num">04</span><span class="station__name">Salão</span><span
+                  class="station__meta">AVALIAÇÃO GOOGLE</span></div>
+              <div class="run-tick"><svg class="icon">
+                  <use href="#icon-zap" />
+                </svg>1 TOQUE</div>
+              <div class="station"><span class="station__num">05</span><span class="station__name">Loja de roupa</span><span
+                  class="station__meta">CATÁLOGO</span></div>
+              <div class="run-tick"><svg class="icon">
+                  <use href="#icon-zap" />
+                </svg>1 TOQUE</div>
+              <div class="station"><span class="station__num">06</span><span class="station__name">Hotel</span><span
+                  class="station__meta">WI-FI</span></div>
+              <div class="run-tick"><svg class="icon">
+                  <use href="#icon-zap" />
+                </svg>1 TOQUE</div>
+              <div class="station"><span class="station__num">07</span><span class="station__name">Consultório</span><span
+                  class="station__meta">CONFIRMAÇÃO</span></div>
+              <div class="run-tick"><svg class="icon">
+                  <use href="#icon-zap" />
+                </svg>1 TOQUE</div>
+              <div class="station"><span class="station__num">08</span><span class="station__name">Food truck</span><span
+                  class="station__meta">PIX</span></div>
+              <div class="run-tick"><svg class="icon">
+                  <use href="#icon-zap" />
+                </svg>1 TOQUE</div>
+            </div>
+            <!-- A segunda cópia é o que faz a esteira parecer infinita: a
+                 animação anda -50%, que é exatamente uma sequência. -->
+            <div class="splitbar__seq" aria-hidden="true">
+              <div class="station"><span class="station__num">01</span><span
+                  class="station__name">Restaurante</span><span class="station__meta">CARDÁPIO</span></div>
+              <div class="run-tick"><svg class="icon">
+                  <use href="#icon-zap" />
+                </svg>1 TOQUE</div>
+              <div class="station"><span class="station__num">02</span><span class="station__name">Barbearia</span><span
+                  class="station__meta">AGENDAMENTO</span></div>
+              <div class="run-tick"><svg class="icon">
+                  <use href="#icon-zap" />
+                </svg>1 TOQUE</div>
+              <div class="station"><span class="station__num">03</span><span class="station__name">Imobiliária</span><span
+                  class="station__meta">TOUR DO IMÓVEL</span></div>
+              <div class="run-tick"><svg class="icon">
+                  <use href="#icon-zap" />
+                </svg>1 TOQUE</div>
+              <div class="station"><span class="station__num">04</span><span class="station__name">Salão</span><span
+                  class="station__meta">AVALIAÇÃO GOOGLE</span></div>
+              <div class="run-tick"><svg class="icon">
+                  <use href="#icon-zap" />
+                </svg>1 TOQUE</div>
+              <div class="station"><span class="station__num">05</span><span class="station__name">Loja de roupa</span><span
+                  class="station__meta">CATÁLOGO</span></div>
+              <div class="run-tick"><svg class="icon">
+                  <use href="#icon-zap" />
+                </svg>1 TOQUE</div>
+              <div class="station"><span class="station__num">06</span><span class="station__name">Hotel</span><span
+                  class="station__meta">WI-FI</span></div>
+              <div class="run-tick"><svg class="icon">
+                  <use href="#icon-zap" />
+                </svg>1 TOQUE</div>
+              <div class="station"><span class="station__num">07</span><span class="station__name">Consultório</span><span
+                  class="station__meta">CONFIRMAÇÃO</span></div>
+              <div class="run-tick"><svg class="icon">
+                  <use href="#icon-zap" />
+                </svg>1 TOQUE</div>
+              <div class="station"><span class="station__num">08</span><span class="station__name">Food truck</span><span
+                  class="station__meta">PIX</span></div>
+              <div class="run-tick"><svg class="icon">
+                  <use href="#icon-zap" />
+                </svg>1 TOQUE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <section class="audience">
+      <div class="container">
+        <p class="audience__label">Feito pra quem quer montar a operação do zero — ou somar num negócio que já roda:</p>
+        <div class="audience__row">
+          <span>Renda extra</span>
+          <span>Designer freelancer</span>
+          <span>Gráfica rápida</span>
+          <span>Social media</span>
+          <span>Assistência técnica</span>
+          <span>Vendedor online</span>
+          <span>Representante</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PLACEHOLDER — PROVA SOCIAL
+         Estes prints são fictícios e existem só para segurar o layout.
+         Troque por conversas reais de quem comprou antes de publicar.
+         Se houver telefone de terceiro no print, cubra antes (LGPD).
+         ====================================================================== -->
+    <section class="section section--tight" id="depoimentos">
+      <div class="container">
+        <div class="section__head" data-reveal>
+          <p class="eyebrow">Conversas reais</p>
+          <h3 class="proofs__title">O que chega no direct de quem começou</h3>
+        </div>
+
+        <div class="proofs__track" data-proofs-track>
+          <article class="proof">
+            <div class="proof__head">
+              <span class="proof__avatar">RS</span>
+              <div>
+                <p class="proof__who">Rafael S.</p>
+                <p class="proof__when">Semana 2</p>
+              </div>
+            </div>
+            <p class="proof__text">"Fiz a primeira placa no sábado e vendi pro barbeiro da esquina na segunda. R$ 120
+              na primeira tentativa."</p>
+            <p class="proof__meta">1 placa · R$ 120</p>
+          </article>
+
+          <article class="proof">
+            <div class="proof__head">
+              <span class="proof__avatar">JM</span>
+              <div>
+                <p class="proof__who">Juliana M.</p>
+                <p class="proof__when">Semana 5</p>
+              </div>
+            </div>
+            <p class="proof__text">"Usei o script de WhatsApp igualzinho. De 14 comércios que chamei, 5 pediram
+              orçamento e 3 fecharam."</p>
+            <p class="proof__meta">3 clientes · R$ 390</p>
+          </article>
+
+          <article class="proof">
+            <div class="proof__head">
+              <span class="proof__avatar">DC</span>
+              <div>
+                <p class="proof__who">Diego C.</p>
+                <p class="proof__when">Semana 9</p>
+              </div>
+            </div>
+            <p class="proof__text">"O que mudou foi a precificação. Eu estava cobrando R$ 45 e achando caro. Hoje
+              cobro R$ 110 e ninguém reclama."</p>
+            <p class="proof__meta">Ticket 2,4x maior</p>
+          </article>
+
+          <article class="proof">
+            <div class="proof__head">
+              <span class="proof__avatar">PA</span>
+              <div>
+                <p class="proof__who">Patrícia A.</p>
+                <p class="proof__when">Semana 12</p>
+              </div>
+            </div>
+            <p class="proof__text">"Fechei um contrato de 22 placas com uma rede de lanchonetes. Só esse pedido pagou
+              o ano inteiro."</p>
+            <p class="proof__meta">22 placas · pedido único</p>
+          </article>
+        </div>
+
+        <div class="proofs__nav" data-proofs-nav>
+          <div class="proofs__dots" data-proofs-dots style="display:flex;gap:8px;align-items:center"></div>
+        </div>
+      </div>
+    </section>
+
+    </div>
+
+    <section class="section section--light" id="oferta">
+      <div class="container">
+        <div class="section__head section__head--center" data-reveal>
+          <p class="eyebrow">Os materiais</p>
+          <h2 class="section-title" style="max-width:20ch; margin-inline:auto;">Escolha por onde <em>começar</em></h2>
+          <p class="lede">Um te ensina a produzir a placa. O outro te ensina a vender. Ou leve tudo — com os bônus e
+            o grupo — no Pacote Completo.</p>
+        </div>
+
+        <div class="offer-grid" data-reveal>
+          <div class="offer-card">
+            <div class="offer-card__media">
+              <!-- Troque por assets/images/mockup-guia.jpg quando tiver o mockup -->
+              <div class="media-holder">
+                <svg class="icon">
+                  <use href="#icon-file" />
+                </svg>
+                <span>Guia da Placa NFC · PDF</span>
+              </div>
+            </div>
+            <p class="offer-card__label">Pra entender e produzir</p>
+            <h3 class="offer-card__title">Guia da Placa NFC</h3>
+            <p class="offer-card__subtitle">62 páginas · PDF digital</p>
+            <div class="offer-card__price">
+              <span class="amount">R$ 19,00</span>
+              <span class="terms">pagamento único</span>
+            </div>
+            <p class="offer-card__desc">A parte técnica inteira: que tag comprar, como gravar o link, como montar a
+              placa e o que faz uma dar defeito.</p>
+            <ul class="offer-card__bullets">
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Como o NFC funciona — e por que não precisa de app nem de câmera</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Qual chip usar em cada caso: NTAG213, 215 e 216</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Onde comprar tag no Brasil e na China, com faixa de preço real</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Gravação passo a passo pelo celular, com o link travado</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Os 7 erros que queimam a tag — e como testar antes de entregar</li>
+            </ul>
+            <a href="#" class="btn btn--primary btn--block" target="_blank" rel="noopener" data-checkout-placeholder
+              data-checkout="Guia da Placa NFC" data-sku="guia-nfc" data-price="19.00">Quero o Guia — R$19</a>
+            <p class="trust-line"><svg class="icon">
+                <use href="#icon-shield" />
+              </svg>Pagamento único · Acesso imediato · 7 dias de garantia</p>
+          </div>
+
+          <div class="offer-card offer-card--featured">
+            <span class="offer-card__badge">Mais completo</span>
+            <div class="offer-card__media">
+              <!-- Troque por assets/images/mockup-metodo.jpg -->
+              <div class="media-holder">
+                <svg class="icon">
+                  <use href="#icon-target" />
+                </svg>
+                <span>Método TapFlow · PDF + planilhas</span>
+              </div>
+            </div>
+            <p class="offer-card__label">Pra produzir e vender</p>
+            <h3 class="offer-card__title">Método TapFlow</h3>
+            <p class="offer-card__subtitle">Produção + venda · acesso imediato</p>
+            <div class="offer-card__price">
+              <span class="amount">R$ 47,00</span>
+              <span class="terms">pagamento único</span>
+              <span class="offer-card__per">se paga na primeira placa vendida</span>
+            </div>
+            <p class="offer-card__desc">Da bancada até o primeiro contrato: como montar a placa com acabamento de
+              loja, quanto cobrar e exatamente o que falar pra fechar.</p>
+            <ul class="offer-card__bullets offer-card__bullets--collapsible" id="bulletsMetodo">
+              <li class="offer-card__group">Montar a operação</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Lista de compras com menos de R$ 300 — o que é essencial e o que pode esperar</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Três acabamentos: acrílico, PVC e MDF — custo e quando usar cada um</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Como cortar, imprimir e colar sem bolha e sem borda torta</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Onde esconder a tag pra placa ficar limpa e funcionar sempre</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Checklist de qualidade antes de entregar</li>
+
+              <li class="offer-card__group">O que vai dentro da placa</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Avaliação no Google, cardápio, agendamento, PIX, catálogo e Wi-Fi</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Como montar a página de destino de graça — e por que nunca gravar o link final</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>O link intermediário que deixa você trocar o destino sem trocar a placa</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Como contar quantos toques a placa recebeu — o dado que renova o contrato</li>
+
+              <li class="offer-card__group">Preço e margem</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Planilha de custo real por placa, com frete e perda</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Três faixas de preço: avulsa, kit e contrato mensal</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Como responder "tá caro" sem dar desconto</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Quando cobrar mensalidade pela manutenção do link</li>
+
+              <li class="offer-card__group">Os primeiros clientes</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Os 10 nichos que compram mais rápido, em ordem de facilidade</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Script de WhatsApp pronto — a primeira mensagem e as três respostas</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>A abordagem presencial de 40 segundos com a placa na mão</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Como usar a placa de demonstração pra fechar na hora</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>O plano de 14 dias: o que fazer em cada um até o primeiro pedido</li>
+            </ul>
+            <button type="button" class="offer-card__more" data-bullets-toggle aria-controls="bulletsMetodo"
+              aria-expanded="false">Ver tudo que vem no método</button>
+            <a href="#" class="btn btn--primary btn--block" target="_blank" rel="noopener" data-checkout-placeholder
+              data-checkout="Método TapFlow" data-sku="metodo-tapflow" data-price="47.00">Quero o Método — R$47</a>
+            <p class="trust-line"><svg class="icon">
+                <use href="#icon-shield" />
+              </svg>Pagamento único · Acesso imediato · 7 dias de garantia</p>
+          </div>
+        </div>
+
+        <!-- Pacote Completo. O prazo e as vagas ficam declarados em atributos
+             (data-deadline, data-restantes) para existir um lugar só onde
+             mexer: o JS lá embaixo lê daqui, e some com a faixa quando o prazo
+             passa. Ajuste data-restantes conforme as vendas reais. -->
+        <div class="offer-bundle" data-reveal>
+          <div class="offer-bundle__urgency-bar" data-bundle-urgency data-deadline="2026-09-30T23:59:59-03:00">
+            <span class="offer-bundle__urgency-badge">
+              <span class="offer-bundle__pulse-dot"></span>
+              Preço de lote até 30/09
+            </span>
+
+            <div class="bundle-countdown" data-bundle-countdown>
+              <span class="bundle-countdown__label">Encerra em</span>
+              <div class="bundle-countdown__slots">
+                <span class="bundle-countdown__slot"><b data-cd="dias">--</b><i>dias</i></span>
+                <span class="bundle-countdown__slot"><b data-cd="horas">--</b><i>horas</i></span>
+                <span class="bundle-countdown__slot"><b data-cd="min">--</b><i>min</i></span>
+                <span class="bundle-countdown__slot"><b data-cd="seg">--</b><i>seg</i></span>
+              </div>
+            </div>
+
+            <div class="bundle-slots" data-bundle-slots data-total="30" data-restantes="30">
+              <p class="bundle-slots__text"><span data-slots-verb>Restam</span> <strong data-slots-left>30</strong> de
+                <span data-slots-total>30</span> vagas
+              </p>
+              <span class="bundle-slots__meter"><i data-slots-meter style="width:100%"></i></span>
+            </div>
+          </div>
+
+          <div class="offer-bundle__copy">
+            <p class="eyebrow">Preço de lote · até 30/09</p>
+            <h3 class="offer-bundle__title">Pacote Completo — a operação inteira</h3>
+            <p class="offer-bundle__desc">Tudo que você precisa pra sair produzindo e vendendo na mesma semana: a
+              parte técnica, o método de venda, as artes prontas e o grupo pra tirar dúvida. Depois de 30/09 o valor
+              volta ao normal.</p>
+            <ul class="offer-bundle__bullets">
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg><span><strong>Método TapFlow</strong> — produção, precificação e venda</span></li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg><span><strong>Guia da Placa NFC</strong> — 62 páginas da parte técnica</span></li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg><span><strong>Bônus: Pack de artes editáveis</strong> — 30 layouts no Canva, um pra cada
+                  nicho</span></li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg><span><strong>Bônus: Planilha de precificação</strong> — digite o custo, ela devolve os três
+                  preços</span></li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg><span><strong>Bônus: Fornecedores conferidos</strong> — lista com link, prazo e preço por
+                  faixa</span></li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg><span><strong>Grupo no WhatsApp</strong> — tira-dúvidas e os pedidos que aparecem no
+                  grupo</span></li>
+            </ul>
+
+            <div class="bundle-stack">
+              <p class="bundle-stack__label">5 materiais · um acesso só</p>
+              <div class="bundle-stack__row">
+                <figure class="bundle-stack__item">
+                  <svg class="icon">
+                    <use href="#icon-target" />
+                  </svg>
+                  <figcaption>Método TapFlow</figcaption>
+                </figure>
+                <figure class="bundle-stack__item">
+                  <svg class="icon">
+                    <use href="#icon-file" />
+                  </svg>
+                  <figcaption>Guia da Placa</figcaption>
+                </figure>
+                <figure class="bundle-stack__item">
+                  <svg class="icon">
+                    <use href="#icon-image" />
+                  </svg>
+                  <figcaption>30 artes no Canva</figcaption>
+                </figure>
+                <figure class="bundle-stack__item">
+                  <svg class="icon">
+                    <use href="#icon-tag" />
+                  </svg>
+                  <figcaption>Planilha de preço</figcaption>
+                </figure>
+              </div>
+            </div>
+          </div>
+
+          <div class="offer-bundle__buy">
+            <p class="offer-bundle__buy-label">Pacote Completo</p>
+            <div class="offer-bundle__price">
+              <span class="was">de <s>R$ 127,00</s></span>
+              <span class="amount">R$ 67</span>
+              <span class="terms">pagamento único · acesso vitalício</span>
+              <span class="per">≈ 1 placa vendida paga tudo</span>
+            </div>
+            <a href="#" class="btn btn--primary btn--block btn--bundle" target="_blank" rel="noopener"
+              data-checkout-placeholder data-checkout="Pacote Completo" data-sku="pacote-completo"
+              data-price="67.00">Garantir minha vaga</a>
+            <p class="trust-line"><svg class="icon">
+                <use href="#icon-shield" />
+              </svg>7 dias de garantia · devolução sem pergunta</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="resultados">
+      <div class="container">
+        <div class="section__head" data-reveal>
+          <p class="eyebrow">Os números</p>
+          <h2 class="section-title">A conta que faz esse negócio girar</h2>
+          <p class="lede">Não é promessa de faturamento. É o custo real de uma placa e o preço que o mercado já paga
+            por ela hoje.</p>
+        </div>
+        <div class="stats-grid" data-reveal>
+          <div class="stat"><span class="stat__num">R$ 8</span>
+            <p class="stat__desc">custo médio de uma placa produzida por você, com tag e acabamento</p>
+          </div>
+          <div class="stat"><span class="stat__num">R$ 90</span>
+            <p class="stat__desc">preço de entrada praticado no mercado pela placa pronta</p>
+          </div>
+          <div class="stat"><span class="stat__num">48h</span>
+            <p class="stat__desc">do material chegando até a primeira placa funcionando na sua mão</p>
+          </div>
+          <div class="stat"><span class="stat__num">10</span>
+            <p class="stat__desc">nichos mapeados que já compram, em ordem de facilidade de fechar</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tight">
+      <div class="container">
+        <div class="cta-strip" data-reveal>
+          <p class="eyebrow">Os materiais</p>
+          <h2 class="cta-strip__title">A primeira placa vendida já paga o método inteiro.</h2>
+          <div class="cta-strip__actions">
+            <a href="#" class="btn btn--primary" target="_blank" rel="noopener" data-checkout-placeholder
+              data-checkout="Método TapFlow" data-sku="metodo-tapflow" data-price="47.00">Quero o Método — R$47</a>
+            <a href="#" class="btn btn--ghost" target="_blank" rel="noopener" data-checkout-placeholder
+              data-checkout="Guia da Placa NFC" data-sku="guia-nfc" data-price="19.00">Só o Guia — R$19</a>
+          </div>
+          <p class="trust-line"><svg class="icon">
+              <use href="#icon-shield" />
+            </svg>Pagamento único · Acesso imediato · 7 dias de garantia</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--light" id="metodo">
+      <div class="container">
+        <div class="section__head section__head--center" data-reveal>
+          <p class="eyebrow">Por dentro do método</p>
+          <h2 class="section-title" style="max-width:22ch; margin-inline:auto;">Três etapas, na ordem em que você
+            precisa delas</h2>
+          <p class="lede">Nada de teoria de mercado. Cada etapa termina com uma coisa pronta na sua mão.</p>
+        </div>
+
+        <div class="steps" data-reveal>
+          <article class="step">
+            <h3 class="step__title">Produzir</h3>
+            <p class="step__desc">Sai daqui com uma placa pronta, com acabamento que não parece caseiro.</p>
+            <ul class="step__list">
+              <li><svg class="icon">
+                  <use href="#icon-tool" />
+                </svg>Lista de compras fechada, abaixo de R$ 300</li>
+              <li><svg class="icon">
+                  <use href="#icon-tool" />
+                </svg>Acrílico, PVC ou MDF: custo e acabamento de cada um</li>
+              <li><svg class="icon">
+                  <use href="#icon-tool" />
+                </svg>Corte, impressão e colagem sem bolha</li>
+              <li><svg class="icon">
+                  <use href="#icon-tool" />
+                </svg>Teste de qualidade antes de entregar</li>
+            </ul>
+          </article>
+
+          <article class="step">
+            <h3 class="step__title">Programar</h3>
+            <p class="step__desc">A parte que ninguém explica direito: o que vai dentro da tag e como trocar depois.</p>
+            <ul class="step__list">
+              <li><svg class="icon">
+                  <use href="#icon-nfc" />
+                </svg>Gravação pelo celular, sem equipamento extra</li>
+              <li><svg class="icon">
+                  <use href="#icon-nfc" />
+                </svg>Link intermediário: troque o destino sem trocar a placa</li>
+              <li><svg class="icon">
+                  <use href="#icon-nfc" />
+                </svg>Avaliação no Google, cardápio, agendamento, PIX e Wi-Fi</li>
+              <li><svg class="icon">
+                  <use href="#icon-nfc" />
+                </svg>Contagem de toques — o número que renova o contrato</li>
+            </ul>
+          </article>
+
+          <article class="step">
+            <h3 class="step__title">Vender</h3>
+            <p class="step__desc">Os primeiros dez clientes saem daqui, com o que falar já escrito.</p>
+            <ul class="step__list">
+              <li><svg class="icon">
+                  <use href="#icon-chat" />
+                </svg>10 nichos em ordem de facilidade de fechar</li>
+              <li><svg class="icon">
+                  <use href="#icon-chat" />
+                </svg>Script de WhatsApp e as três respostas mais comuns</li>
+              <li><svg class="icon">
+                  <use href="#icon-chat" />
+                </svg>Abordagem presencial de 40 segundos</li>
+              <li><svg class="icon">
+                  <use href="#icon-chat" />
+                </svg>Plano de 14 dias até o primeiro pedido</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PLACEHOLDER — ESPECIALISTA
+         Substituir por quem de fato assina o material: nome, foto, histórico
+         verdadeiro e uma frase dita por essa pessoa.
+         ====================================================================== -->
+    <section class="section section--navy" id="expert">
+      <div class="container">
+        <div class="section__head" data-reveal>
+          <p class="eyebrow">Quem assina o material</p>
+          <h2 class="section-title">Quem já montou essa operação</h2>
+        </div>
+        <div class="expert__grid" data-reveal>
+          <div class="expert__media">
+            <!-- Troque por assets/images/expert.jpg -->
+            <div class="media-holder">
+              <svg class="icon">
+                <use href="#icon-image" />
+              </svg>
+              <span>Foto do especialista</span>
+            </div>
+          </div>
+          <div class="expert__copy">
+            <h3 class="expert__name">[Seu nome aqui]</h3>
+            <p class="expert__role">Produção e venda de placas NFC</p>
+            <p class="expert__bio">[Substituir por sua história real: há quanto tempo produz, quantas placas já
+              entregou, em que cidade atua e como chegou ao processo que ensina aqui.]</p>
+            <ul class="expert__creds">
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>[Credencial verificável 1]</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>[Credencial verificável 2]</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>[Credencial verificável 3]</li>
+            </ul>
+            <p class="expert__quote">"[Uma frase sua, que resuma por que o método existe.]"</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PLACEHOLDER — CASES
+         Três histórias fictícias, aqui só para segurar o layout. Trocar por
+         alunos reais, com autorização de uso de nome e imagem.
+         ====================================================================== -->
+    <section class="section" id="cases">
+      <div class="container">
+        <div class="section__head" data-reveal>
+          <p class="eyebrow">Quem aplicou</p>
+          <h2 class="section-title">Três pontos de partida diferentes</h2>
+          <p class="lede">Nenhum deles tinha loja, estoque ou experiência com impressão quando começou.</p>
+        </div>
+
+        <div class="case" data-reveal>
+          <div class="case__copy">
+            <div class="case__avatar-wrap">
+              <span class="case__avatar">RS</span>
+              <div>
+                <p class="case__name">Rafael Souza</p>
+                <p class="eyebrow" style="margin:0;">Começou do zero · 2 meses</p>
+              </div>
+            </div>
+            <p class="case__quote">"Eu achava que precisava de uma gráfica. Precisava de uma mesa e R$ 240."</p>
+            <p class="case__desc">Montou a bancada num fim de semana, fez três placas de demonstração e saiu batendo
+              na porta do comércio do bairro.</p>
+            <ul class="case__bullets">
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Primeira venda em 9 dias</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Investimento inicial recuperado na terceira placa</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Hoje entrega em média 6 placas por mês</li>
+            </ul>
+            <a href="#oferta" class="case__link">Quero o mesmo ponto de partida <svg class="icon">
+                <use href="#icon-arrow" />
+              </svg></a>
+          </div>
+          <div class="case__card">
+            <p class="case__card-label">Em dois meses</p>
+            <div class="case__metrics">
+              <div class="case__metric"><b>12</b><span>placas entregues</span></div>
+              <div class="case__metric"><b>R$ 1.140</b><span>faturado no período</span></div>
+              <div class="case__metric"><b>9 dias</b><span>até a primeira venda</span></div>
+              <div class="case__metric"><b>R$ 240</b><span>investimento inicial</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="case case--reverse" data-reveal>
+          <div class="case__copy">
+            <div class="case__avatar-wrap">
+              <span class="case__avatar">JM</span>
+              <div>
+                <p class="case__name">Juliana Martins</p>
+                <p class="eyebrow" style="margin:0;">Social media · 3 meses</p>
+              </div>
+            </div>
+            <p class="case__quote">"Ofereci pros clientes que eu já atendia. Metade comprou na mesma semana."</p>
+            <p class="case__desc">Não precisou prospectar do zero: usou a carteira que já tinha e transformou a placa
+              num item a mais na proposta mensal.</p>
+            <ul class="case__bullets">
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>8 clientes da própria base fecharam</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Passou a cobrar manutenção do link por mês</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Ticket médio subiu de R$ 45 para R$ 110</li>
+            </ul>
+            <a href="#oferta" class="case__link">Quero oferecer na minha base <svg class="icon">
+                <use href="#icon-arrow" />
+              </svg></a>
+          </div>
+          <div class="case__card">
+            <p class="case__card-label">Em três meses</p>
+            <div class="case__metrics">
+              <div class="case__metric"><b>8</b><span>clientes da base</span></div>
+              <div class="case__metric"><b>R$ 110</b><span>ticket médio</span></div>
+              <div class="case__metric"><b>2,4x</b><span>aumento de ticket</span></div>
+              <div class="case__metric"><b>5</b><span>contratos de manutenção</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="case" data-reveal>
+          <div class="case__copy">
+            <div class="case__avatar-wrap">
+              <span class="case__avatar">PA</span>
+              <div>
+                <p class="case__name">Patrícia Alves</p>
+                <p class="eyebrow" style="margin:0;">Renda extra · 4 meses</p>
+              </div>
+            </div>
+            <p class="case__quote">"O pedido grande não veio de anúncio. Veio de uma placa que alguém viu no balcão."</p>
+            <p class="case__desc">Começou vendendo unidade por unidade até uma rede de lanchonetes pedir orçamento
+              para as 22 unidades.</p>
+            <ul class="case__bullets">
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Um pedido único de 22 placas</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Produção do lote em 5 dias, sozinha</li>
+              <li><svg class="icon">
+                  <use href="#icon-check" />
+                </svg>Continua trabalhando meio período</li>
+            </ul>
+            <a href="#oferta" class="case__link">Quero chegar nos pedidos grandes <svg class="icon">
+                <use href="#icon-arrow" />
+              </svg></a>
+          </div>
+          <div class="case__card">
+            <p class="case__card-label">Maior pedido</p>
+            <div class="case__metrics">
+              <div class="case__metric"><b>22</b><span>placas num pedido</span></div>
+              <div class="case__metric"><b>5 dias</b><span>pra produzir o lote</span></div>
+              <div class="case__metric"><b>R$ 1.980</b><span>valor do contrato</span></div>
+              <div class="case__metric"><b>0</b><span>gasto com anúncio</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--light" id="faq">
+      <div class="container">
+        <div class="section__head section__head--center" data-reveal>
+          <p class="eyebrow">FAQ</p>
+          <h2 class="section-title">O que perguntam antes de comprar</h2>
+        </div>
+        <div class="faq-list" data-reveal>
+          <details class="faq-item" open>
+            <summary>Preciso saber alguma coisa de tecnologia?<span class="faq-item__toggle"><svg class="icon">
+                  <use href="#icon-plus" />
+                </svg></span></summary>
+            <p>Não. Gravar uma tag NFC é mais parecido com salvar um contato no celular do que com programar. O guia
+              mostra a tela a tela, pelo próprio celular, sem nenhum equipamento além do aparelho que você já tem.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Quanto preciso investir pra começar?<span class="faq-item__toggle"><svg class="icon">
+                  <use href="#icon-plus" />
+                </svg></span></summary>
+            <p>A lista de compras do método fecha abaixo de R$ 300, e ela separa o que é essencial do que pode
+              esperar. Dá pra começar com bem menos se você já tiver impressora ou acesso a uma gráfica rápida.</p>
+          </details>
+          <details class="faq-item">
+            <summary>As tags demoram pra chegar da China?<span class="faq-item__toggle"><svg class="icon">
+                  <use href="#icon-plus" />
+                </svg></span></summary>
+            <p>Sim, o prazo internacional costuma ser longo. Por isso a lista de fornecedores traz também os
+              nacionais: você paga um pouco mais por unidade, mas recebe em dias e já começa a vender enquanto o
+              lote grande vem a caminho.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Meu celular não tem NFC. Isso impede?<span class="faq-item__toggle"><svg class="icon">
+                  <use href="#icon-plus" />
+                </svg></span></summary>
+            <p>Impede a gravação pelo seu aparelho, sim — é o único ponto em que o NFC do celular é obrigatório. O
+              guia traz duas saídas: gravadores USB baratos e como usar o aparelho de outra pessoa nas primeiras
+              placas.</p>
+          </details>
+          <details class="faq-item">
+            <summary>Como recebo os materiais depois de comprar?<span class="faq-item__toggle"><svg class="icon">
+                  <use href="#icon-plus" />
+                </svg></span></summary>
+            <p>O acesso chega no seu e-mail assim que o pagamento é confirmado. São arquivos digitais: você baixa e
+              fica com eles. Nada é enviado pelos Correios.</p>
+          </details>
+          <details class="faq-item">
+            <summary>E se não for o que eu esperava?<span class="faq-item__toggle"><svg class="icon">
+                  <use href="#icon-plus" />
+                </svg></span></summary>
+            <p>Você tem 7 dias para pedir o dinheiro de volta, sem precisar explicar o motivo. É o prazo do Código de
+              Defesa do Consumidor para compra digital, e ele vale integralmente aqui.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section cta-section" id="cta">
+      <div class="container">
+        <div data-reveal>
+          <p class="eyebrow">Próximo passo</p>
+          <h2 class="section-title" style="max-width:20ch; margin-inline:auto;">Sua primeira placa pode ficar pronta
+            <em>neste fim de semana</em>
+          </h2>
+          <p class="lede" style="margin-inline:auto;">O material chega no e-mail agora. O que você faz no sábado é
+            com você.</p>
+          <div class="cta-section__actions">
+            <a href="#" class="btn btn--primary" target="_blank" rel="noopener" data-checkout-placeholder
+              data-checkout="Pacote Completo" data-sku="pacote-completo" data-price="67.00">Quero o Pacote Completo —
+              R$67</a>
+            <a href="#oferta" class="btn btn--ghost">Comparar os materiais</a>
+          </div>
+          <p class="trust-line"><svg class="icon">
+              <use href="#icon-shield" />
+            </svg>Pagamento único · Acesso imediato · 7 dias de garantia</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Barra de compra fixa: só aparece no celular, onde o botão do header
+       some. Oferece o Pacote enquanto o lote vale; passado o data-deadline da
+       faixa de urgência, o JS troca pelo Método (dados em data-fallback-*). -->
+  <div class="buybar" id="buyBar" data-fallback-name="Método TapFlow" data-fallback-price="R$ 47,00"
+    data-fallback-per="acesso imediato" data-fallback-href="#" data-fallback-checkout="Método TapFlow"
+    data-fallback-sku="metodo-tapflow" data-fallback-value="47.00" data-fallback-label="Quero o método">
+    <div class="buybar__info">
+      <span class="buybar__name" data-buybar-name>Pacote · até 30/09</span>
+      <span class="buybar__price"><span data-buybar-price>R$ 67,00</span> <em data-buybar-per>vitalício</em></span>
+    </div>
+    <a href="#" class="btn btn--primary buybar__btn" target="_blank" rel="noopener" data-checkout-placeholder
+      data-checkout="Pacote Completo" data-sku="pacote-completo" data-price="67.00" data-buybar-btn>Garantir vaga</a>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>TapFlow · Material digital sobre produção e venda de placas NFC. Os valores citados são referências de custo
+        e de preço praticado no mercado, não promessa de faturamento. O resultado depende do seu trabalho.</p>
+      <ul class="site-footer__links">
+        <li><a href="#oferta">Materiais</a></li>
+        <li><a href="#faq">Dúvidas</a></li>
+        <li><a href="#">Termos de uso</a></li>
+        <li><a href="#">Privacidade</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script>
+    /* ======================================================================
+       Header, menu e revelação
+       ====================================================================== */
+    (function () {
+      var header = document.getElementById('siteHeader');
+      var drawer = document.getElementById('mobileDrawer');
+      var navToggle = document.getElementById('navToggle');
+
+      if (header) {
+        var onScroll = function () {
+          header.classList.toggle('is-scrolled', window.scrollY > 12);
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+      }
+
+      if (navToggle && drawer) {
+        var fechar = function () {
+          drawer.classList.remove('is-open');
+          navToggle.setAttribute('aria-expanded', 'false');
+          navToggle.setAttribute('aria-label', 'Abrir menu');
+        };
+
+        navToggle.addEventListener('click', function () {
+          var aberto = drawer.classList.toggle('is-open');
+          navToggle.setAttribute('aria-expanded', String(aberto));
+          navToggle.setAttribute('aria-label', aberto ? 'Fechar menu' : 'Abrir menu');
+        });
+
+        /* Clicar num link do menu rola a página — o menu precisa sair da
+           frente sozinho, senão cobre o destino. */
+        drawer.addEventListener('click', function (e) {
+          if (e.target.closest('a')) fechar();
+        });
+
+        window.addEventListener('resize', function () {
+          if (window.innerWidth > 900) fechar();
+        });
+
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') fechar();
+        });
+      }
+
+      /* No celular a revelação por scroll fica desligada (ver o CSS): aqui o
+         JS acompanha, marcando tudo como visível de uma vez em vez de
+         observar. */
+      var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var skipReveal = reduceMotion || window.matchMedia('(max-width: 900px)').matches;
+      var revealEls = document.querySelectorAll('[data-reveal]');
+
+      if ('IntersectionObserver' in window && !skipReveal) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              io.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+        revealEls.forEach(function (el) { io.observe(el); });
+      } else {
+        revealEls.forEach(function (el) { el.classList.add('is-visible'); });
+      }
+    })();
+
+    /* ======================================================================
+       Carrossel de prints
+       Trabalha com "paradas": as posições de rolagem onde o carrossel pode de
+       fato parar (no celular, uma por print; no desktop, com vários visíveis,
+       bem menos). As bolinhas levam direto a uma parada com scrollTo, que
+       convive melhor com o scroll-snap do celular do que rolar uma distância.
+       ====================================================================== */
+    (function () {
+      var track = document.querySelector('[data-proofs-track]');
+      var dotsWrap = document.querySelector('[data-proofs-dots]');
+      if (!track || !dotsWrap) return;
+
+      var items = Array.prototype.slice.call(track.children);
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var stops = [];
+      var dots = [];
+
+      function montar() {
+        var max = track.scrollWidth - track.clientWidth;
+        stops = [];
+
+        /* Uma parada por item, mas descartando as que passariam do fim: com
+           três cards visíveis, os dois últimos compartilham a mesma parada. */
+        items.forEach(function (item) {
+          var p = Math.min(item.offsetLeft - track.offsetLeft, max);
+          if (!stops.some(function (q) { return Math.abs(q - p) < 8; })) stops.push(p);
+        });
+
+        dotsWrap.innerHTML = '';
+        dots = stops.map(function (p, i) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'proofs__dot';
+          b.setAttribute('aria-label', 'Ir para o depoimento ' + (i + 1));
+          b.addEventListener('click', function () {
+            track.scrollTo({ left: p, behavior: reduce ? 'auto' : 'smooth' });
+          });
+          dotsWrap.appendChild(b);
+          return b;
+        });
+
+        /* Uma parada só significa que tudo cabe na tela: as bolinhas não têm
+           função nenhuma e só poluiriam. */
+        dotsWrap.parentElement.style.display = stops.length > 1 ? 'flex' : 'none';
+        pintar();
+      }
+
+      function pintar() {
+        var x = track.scrollLeft, best = 0, dist = Infinity;
+        stops.forEach(function (p, i) {
+          var d = Math.abs(p - x);
+          if (d < dist) { dist = d; best = i; }
+        });
+        dots.forEach(function (d, i) { d.classList.toggle('is-active', i === best); });
+      }
+
+      track.addEventListener('scroll', pintar, { passive: true });
+
+      var resizeTimer;
+      window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(montar, 150);
+      });
+
+      montar();
+    })();
+
+    /* ======================================================================
+       Lista longa do Método no celular
+       ====================================================================== */
+    document.querySelectorAll('[data-bullets-toggle]').forEach(function (btn) {
+      var list = document.getElementById(btn.getAttribute('aria-controls'));
+      if (!list) return;
+      var fechado = btn.textContent;
+      btn.addEventListener('click', function () {
+        var aberto = list.classList.toggle('is-open');
+        btn.setAttribute('aria-expanded', String(aberto));
+        btn.textContent = aberto ? 'Mostrar menos' : fechado;
+      });
+    });
+
+    /* ======================================================================
+       Faixa de urgência: vagas do lote e contagem regressiva
+       ====================================================================== */
+    (function () {
+      var bar = document.querySelector('[data-bundle-urgency]');
+      if (!bar) return;
+
+      /* ---- Vagas do lote ----
+         Cada clique no botão do pacote consome uma vaga, e o número fica
+         guardado no navegador de quem clicou: recarregar a página não devolve
+         a vaga. É um contador POR VISITANTE, não global — sem um backend
+         guardando o número, o visitante seguinte começa de novo no total
+         declarado em data-restantes. Nunca chega a zero: para em MIN_VAGAS
+         para a oferta não parecer encerrada. */
+      var MIN_VAGAS = 1;
+      var STORE_KEY = 'tf_vagas_pacote';
+      var slots = bar.querySelector('[data-bundle-slots]');
+
+      if (slots) {
+        var total = parseInt(slots.dataset.total, 10);
+        var declarado = parseInt(slots.dataset.restantes, 10);
+
+        if (isFinite(total) && total > 0 && isFinite(declarado)) {
+          var leftEl = slots.querySelector('[data-slots-left]');
+          var verbEl = slots.querySelector('[data-slots-verb]');
+          var totalEl = slots.querySelector('[data-slots-total]');
+          var meter = slots.querySelector('[data-slots-meter]');
+
+          /* localStorage quebra em janela anônima de alguns navegadores e com
+             cookies de terceiros bloqueados: os acessos ficam protegidos e o
+             contador simplesmente não persiste. */
+          var ler = function () {
+            try {
+              var v = parseInt(localStorage.getItem(STORE_KEY), 10);
+              return isFinite(v) ? v : null;
+            } catch (e) { return null; }
+          };
+
+          var gravar = function (v) {
+            try { localStorage.setItem(STORE_KEY, String(v)); } catch (e) { }
+          };
+
+          var limitar = function (v) {
+            return Math.max(MIN_VAGAS, Math.min(v, total));
+          };
+
+          /* O valor gravado nunca sobe o número de volta: se você baixar o
+             data-restantes no HTML, quem já tinha um valor maior vê o menor. */
+          var salvo = ler();
+          var vagas = limitar(salvo === null ? declarado : Math.min(salvo, declarado));
+
+          var pintar = function () {
+            if (leftEl) leftEl.textContent = String(vagas);
+            if (verbEl) verbEl.textContent = vagas === 1 ? 'Resta' : 'Restam';
+            if (totalEl) totalEl.textContent = String(total);
+            if (meter) meter.style.width = (vagas / total * 100) + '%';
+          };
+
+          pintar();
+
+          /* O botão abre o checkout em outra aba, então quem clicou continua
+             aqui e vê o número cair. */
+          var cta = document.querySelector('.offer-bundle .btn--bundle');
+          if (cta) {
+            cta.addEventListener('click', function () {
+              if (vagas <= MIN_VAGAS) return;
+              vagas = limitar(vagas - 1);
+              gravar(vagas);
+              pintar();
+            });
+          }
+        }
+      }
+
+      /* ---- Contagem regressiva ---- */
+      var deadline = new Date(bar.dataset.deadline);
+      var cd = bar.querySelector('[data-bundle-countdown]');
+      if (!cd || isNaN(deadline.getTime())) return;
+
+      var campos = {
+        dias: cd.querySelector('[data-cd="dias"]'),
+        horas: cd.querySelector('[data-cd="horas"]'),
+        min: cd.querySelector('[data-cd="min"]'),
+        seg: cd.querySelector('[data-cd="seg"]')
+      };
+
+      var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+
+      var timer;
+      var tick = function () {
+        var falta = deadline.getTime() - Date.now();
+        if (falta <= 0) {
+          bar.hidden = true;
+          clearInterval(timer);
+          return;
+        }
+        var s = Math.floor(falta / 1000);
+        campos.dias.textContent = pad(Math.floor(s / 86400));
+        campos.horas.textContent = pad(Math.floor(s % 86400 / 3600));
+        campos.min.textContent = pad(Math.floor(s % 3600 / 60));
+        campos.seg.textContent = pad(s % 60);
+      };
+
+      tick();
+      timer = setInterval(tick, 1000);
+    })();
+
+    /* ======================================================================
+       Barra fixa de compra
+       Aparece depois que o hero sai da tela e some quando a seção de oferta
+       está à vista — ali os botões de verdade já estão na frente da pessoa.
+       O prazo vem do mesmo data-deadline da faixa de urgência, pra existir
+       uma data só no arquivo.
+       ====================================================================== */
+    (function () {
+      var bar = document.getElementById('buyBar');
+      if (!bar) return;
+
+      var oferta = document.getElementById('oferta');
+      var gatilho = document.querySelector('.splitbar');
+
+      /* Aqui não dá pra usar IntersectionObserver: ele só avisa quando o
+         elemento cruza a borda da tela. Num salto de âncora (o menu leva
+         direto pra #faq, por exemplo) a esteira passa de baixo da tela pra
+         cima sem nunca aparecer, o isIntersecting continua false o tempo
+         todo e o callback nunca roda — a barra ficaria escondida. Medir a
+         posição no próprio scroll não tem esse buraco. */
+      var pendente = false;
+
+      var atualizar = function () {
+        pendente = false;
+
+        var passouDoHero = gatilho
+          ? gatilho.getBoundingClientRect().bottom < 0
+          : window.scrollY > window.innerHeight * 0.7;
+
+        /* Dentro da oferta os botões de verdade já estão na frente da
+           pessoa: a barra só atrapalharia. */
+        var naOferta = false;
+        if (oferta) {
+          var r = oferta.getBoundingClientRect();
+          naOferta = r.top < window.innerHeight && r.bottom > 0;
+        }
+
+        bar.classList.toggle('is-visible', passouDoHero && !naOferta);
+      };
+
+      var agendar = function () {
+        if (pendente) return;
+        pendente = true;
+        window.requestAnimationFrame(atualizar);
+      };
+
+      window.addEventListener('scroll', agendar, { passive: true });
+      window.addEventListener('resize', agendar, { passive: true });
+      atualizar();
+
+      /* Passado o prazo do lote, a barra passa a oferecer o Método. */
+      var urgency = document.querySelector('[data-bundle-urgency]');
+      if (!urgency) return;
+      var deadline = new Date(urgency.dataset.deadline).getTime();
+      if (isNaN(deadline)) return;
+
+      var trocar = function () {
+        if (Date.now() <= deadline) return false;
+        var d = bar.dataset;
+        var btn = bar.querySelector('[data-buybar-btn]');
+        bar.querySelector('[data-buybar-name]').textContent = d.fallbackName;
+        bar.querySelector('[data-buybar-price]').textContent = d.fallbackPrice;
+        bar.querySelector('[data-buybar-per]').textContent = d.fallbackPer;
+        btn.href = d.fallbackHref;
+        btn.dataset.checkout = d.fallbackCheckout;
+        btn.dataset.sku = d.fallbackSku;
+        btn.dataset.price = d.fallbackValue;
+        btn.textContent = d.fallbackLabel;
+        return true;
+      };
+
+      /* Checa no carregamento e a cada minuto, pra quem deixa a página aberta
+         virando o prazo. */
+      if (!trocar()) {
+        var t = setInterval(function () {
+          if (trocar()) clearInterval(t);
+        }, 60000);
+      }
+    })();
+
+    /* ======================================================================
+       Checkout: rastreio e aviso de link não configurado
+       Cada botão de compra já carrega data-checkout / data-sku / data-price.
+       Quando o pixel estiver colado no topo do arquivo, descomente a linha do fbq.
+       ====================================================================== */
+    (function () {
+      var pendentes = document.querySelectorAll('[data-checkout-placeholder]');
+
+      if (pendentes.length) {
+        console.warn(
+          '[TapFlow] ' + pendentes.length + ' botões de compra ainda estão sem link de checkout. ' +
+          'Busque por data-checkout-placeholder no index.html e troque o href.'
+        );
+      }
+
+      document.querySelectorAll('[data-checkout]').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          var href = btn.getAttribute('href');
+
+          /* Sem link configurado, o clique levaria ao topo da página e a
+             pessoa acharia que o site quebrou. Melhor mandar pra oferta. */
+          if (!href || href === '#') {
+            e.preventDefault();
+            var alvo = document.getElementById('oferta');
+            if (alvo) alvo.scrollIntoView({ behavior: 'smooth' });
+            return;
+          }
+
+          // if (window.fbq) fbq('track', 'InitiateCheckout', {
+          //   content_name: btn.dataset.checkout,
+          //   content_ids: [btn.dataset.sku],
+          //   value: parseFloat(btn.dataset.price),
+          //   currency: 'BRL'
+          // });
+        });
+      });
+    })();
+  </script>
+
+</body>
+
+</html>
