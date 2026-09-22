@@ -1,4 +1,4 @@
-# TapFlow
+# TapLab
 
 Página de vendas do método de produção e venda de placas NFC.
 
@@ -28,7 +28,7 @@ As fontes vêm do Google Fonts, não há woff2 local.
   linhas finas de contorno.
 - **Tipografia**: `hyrox-page` — Big Shoulders Display nos títulos (caixa alta,
   entrelinha curta), IBM Plex Sans no corpo, IBM Plex Mono nos miúdos.
-- **Paleta**: TapFlow, no lugar do verde do portfolio.
+- **Paleta**: TapLab, no lugar do verde do portfolio.
 
 | Cor | Hex | Uso |
 | --- | --- | --- |

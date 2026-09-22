@@ -4,13 +4,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TapFlow — Produza e venda placas NFC do zero</title>
+  <title>TapLab — Produza e venda placas NFC do zero</title>
   <meta name="description"
     content="O método completo pra produzir placas NFC em casa e fechar os primeiros clientes. Custo por placa a partir de R$ 8, venda a partir de R$ 90 — sem loja, sem estoque, sem funcionário.">
   <meta name="theme-color" content="#05070B">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="TapFlow — Produza e venda placas NFC do zero">
+  <meta property="og:title" content="TapLab — Produza e venda placas NFC do zero">
   <meta property="og:description"
     content="Produza a placa por R$ 8 e venda por R$ 90. O passo a passo da produção e os scripts que trazem os primeiros clientes.">
   <meta property="og:locale" content="pt_BR">
@@ -26,15 +26,24 @@
   <!-- ==========================================================================
        TROCAR ANTES DE PUBLICAR
 
-       1. CHECKOUT — todo botão de compra carrega data-checkout-placeholder.
-          Busque por essa palavra no arquivo e troque o href pelo link real.
+       1. CHECKOUT — feito. Os 6 botões apontam pra Cakto: hhu6ktq_1126947 é
+          o Guia (R$ 30) e o5k9246_1127222 é o Método (R$ 50). Se um preço
+          mudar aqui, o link de lá tem que mudar junto. O aviso de checkout
+          pendente no console procura por data-checkout-placeholder, que não
+          existe mais em nenhum botão.
        2. PROVA SOCIAL — depoimentos, cases e o bloco do especialista estão
           marcados com PLACEHOLDER em comentário. Nunca publicar sem trocar
           por depoimento real: prova social inventada é propaganda enganosa.
        3. PIXEL / UTM — cole as tags no lugar indicado logo abaixo.
-       4. PRAZO DO LOTE — o data-deadline da faixa de urgência é a única data
-          do arquivo. O contador regressivo e a barra fixa de compra leem dali.
-       5. IMAGENS — os mockups em assets/images/ são espaços reservados.
+       4. PACOTE COMPLETO — o card está fora do ar por enquanto. O CSS
+          (.offer-bundle) e o JS da faixa de urgência continuam no arquivo e
+          ficam inertes sem a marcação; quando o Pacote voltar, o data-deadline
+          da faixa volta a ser a única data do arquivo e a barra fixa de compra
+          volta a ler dali.
+       5. IMAGENS — os dois mockups de oferta já são os definitivos
+          (1oferta = Guia, 2oferta = Método), servidos em .webp; os .png
+          originais ficam na pasta como fonte. O único espaço reservado que
+          sobrou é a foto do especialista, na seção que está hidden.
        ========================================================================== -->
 
   <!-- Cole aqui o Meta Pixel / Google Ads / UTMify -->
@@ -44,10 +53,10 @@
        Tokens
        Estrutura e arquitetura de classes vindas do hyrox-page.
        Pele (cores, tipografia, vidro, ruído) vinda do portfolio, com a
-       paleta TapFlow no lugar do verde original.
+       paleta TapLab no lugar do verde original.
        ========================================================================== */
     :root {
-      /* Paleta TapFlow */
+      /* Paleta TapLab */
       --preto: #05070B;
       --marinho: #0B1630;
       --azul: #146CFF;
@@ -76,6 +85,14 @@
 
       --line: rgba(169, 178, 195, 0.14);
       --line-strong: rgba(169, 178, 195, 0.28);
+
+      /* As réguas verticais do hyrox-page. Vive num token porque toda seção
+         que pinta o próprio fundo tapa o do body e precisa redesenhá-las por
+         cima — e porque a seção clara troca só a cor da linha. Todas as
+         caixas começam na borda esquerda da janela e usam o mesmo passo de
+         64px, então as colunas atravessam a página inteira sem desencontrar. */
+      --regua-linha: rgba(247, 249, 252, 0.035);
+      --reguas: repeating-linear-gradient(90deg, var(--regua-linha) 0 1px, transparent 1px 64px);
 
       --font-display: "Big Shoulders Display", "Arial Narrow", sans-serif;
       --font-body: "IBM Plex Sans", system-ui, sans-serif;
@@ -122,7 +139,10 @@
     body {
       margin: 0;
       background-color: var(--bg);
-      /* O ruído do portfolio: um tile de 200px por cima do preto. */
+      /* Tinta lisa e o ruído do portfolio, num tile de 200px. Sem réguas: o
+         que herda este fundo são os blocos de respiro (splitbar, público,
+         depoimentos, resultados, cases, CTA), e ali as colunas só poluíam.
+         Quem desenha régua pede explicitamente com var(--reguas). */
       background-image: url("assets/noise.png");
       background-size: 200px 200px;
       background-position: 0 0;
@@ -319,6 +339,8 @@
 
     .site-header.is-scrolled {
       padding: 12px 0;
+      /* Sem réguas: a barra flutua sobre blocos que não têm coluna nenhuma,
+         então linha aqui apareceria do nada no meio da tela. */
       background: rgba(5, 7, 11, 0.82);
       backdrop-filter: blur(14px);
       -webkit-backdrop-filter: blur(14px);
@@ -506,20 +528,15 @@
     /* ==========================================================================
        Topo: so o hero, sob a grade
        ========================================================================== */
+    /* Sem fundo próprio: a grade quadrada em .webp saiu e o topo deixa passar
+       o fundo do body, pra não haver emenda entre a primeira dobra e o resto
+       da página. O brilho do topo continua sendo o halo do .hero::before. */
+    /* Sem tinta própria: a grade quadrada em .webp saiu e o topo deixa passar
+       o preto e o ruído do body, só somando as réguas por cima. O brilho do
+       topo continua sendo o halo do .hero::before. */
     .topo {
       position: relative;
-      background-color: var(--bg);
-      /* A grade repete em vez de esticar: as bordas da imagem casam entre si,
-         entao as celulas ficam quadradas em qualquer largura, em vez de
-         deformarem num monitor ultrawide.
-         A camada de cima e um esmaecimento curto no fim do hero, so pra
-         imagem nao parecer cortada a faca na borda do bloco seguinte. */
-      background-image:
-        linear-gradient(180deg, transparent 86%, var(--bg) 100%),
-        url("assets/images/hero-grid.webp");
-      background-size: 100% 100%, 1672px 941px;
-      background-repeat: no-repeat, repeat;
-      background-position: center, center top;
+      background-image: var(--reguas);
     }
 
     .prova {
@@ -868,56 +885,64 @@
        Audience
        ========================================================================== */
     .audience {
-      padding-block: clamp(34px, 5vw, 54px);
+      padding-block: clamp(40px, 6vw, 64px);
     }
 
-    .audience__label {
-      font-family: var(--font-mono);
-      font-size: 12px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted-2);
-      margin: 0 0 18px;
-    }
-
-    .audience__row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .audience__row span {
-      padding: 9px 15px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: var(--surface-glass);
-      font-size: 14px;
+    .audience__lede {
+      font-size: clamp(15px, 1.5vw, 17px);
       color: var(--muted);
-      transition: border-color 0.2s ease, color 0.2s ease;
+      margin: 0 0 clamp(22px, 3vw, 32px);
+      max-width: 52ch;
     }
 
-    .audience__row span:hover {
-      border-color: var(--ciano-line);
+    /* Duas colunas de fichas, preenchidas linha a linha. São sete perfis: o
+       ímpar sobra na coluna da esquerda, que é onde a leitura recomeça — se
+       fosse preenchido por coluna, a sobra ficaria pendurada à direita. */
+    .audience__list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      column-gap: clamp(28px, 5vw, 72px);
+    }
+
+    .audience__item {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      column-gap: 14px;
+      padding: 13px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    /* O número ocupa as duas linhas da ficha: fica ao lado do perfil e alinha
+       a nota pela mesma sarjeta, em vez de empurrá-la pra debaixo dele. */
+    .audience__num {
+      grid-row: 1 / span 2;
+      padding-top: 4px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--ciano);
+      opacity: 0.75;
+    }
+
+    .audience__role {
+      font-size: 15px;
+      font-weight: 600;
       color: var(--ink);
     }
 
-    /* Acima de 1180 os sete cabem numa linha so. Abaixo disso a faixa quebra,
-       e o caso feio nao e quebrar: e sobrar exatamente um item pendurado
-       sozinho na ultima linha. Apertar a pilula faz caber mais por linha e
-       tira o pendurado das larguras de tablet. */
-    @media (max-width: 1179px) {
-      .audience {
-        text-align: center;
-      }
+    .audience__note {
+      font-size: 13.5px;
+      line-height: 1.45;
+      color: var(--muted-2);
+      margin-top: 2px;
+    }
 
-      .audience__row {
-        gap: 8px;
-        justify-content: center;
-      }
-
-      .audience__row span {
-        padding: 8px 12px;
-        font-size: 13.5px;
+    @media (max-width: 760px) {
+      .audience__list {
+        grid-template-columns: 1fr;
       }
     }
 
@@ -935,13 +960,24 @@
     /* As duas variantes de fundo: o marinho para blocos de destaque, o
        quase-preto para os blocos de respiro. Mesmo papel que paper-alt e
        dark tinham no hyrox. */
+    /* O marinho do meio tem 55% de alfa. Enquanto o body era só ruído isso
+       não incomodava, mas com as réguas embaixo as linhas do body apareceriam
+       através dele e somariam com as daqui — coluna mais forte no meio da
+       seção e mais fraca nas pontas. Daí a tinta opaca por baixo: a seção
+       desenha as próprias réguas e o próprio ruído, do começo ao fim. */
     .section--navy {
-      background: linear-gradient(180deg, var(--bg-alt), rgba(11, 22, 48, 0.55), var(--bg-alt));
+      background-color: var(--bg);
+      background-image:
+        var(--reguas),
+        url("assets/noise.png"),
+        linear-gradient(180deg, var(--bg-alt), rgba(11, 22, 48, 0.55), var(--bg-alt));
+      background-size: auto, 200px 200px, auto;
       border-block: 1px solid var(--line);
     }
 
     .section--deep {
-      background: #03050A;
+      background-color: #03050A;
+      background-image: var(--reguas);
       border-block: 1px solid var(--line);
     }
 
@@ -958,12 +994,16 @@
       --ciano: var(--azul-escuro);
       --ciano-line: rgba(11, 79, 196, 0.26);
       --ciano-soft: rgba(11, 79, 196, 0.08);
+      /* A régua clara sumiria sobre o branco: aqui a linha inverte e vira
+         tinta. Só a cor muda — o passo de 64px é o mesmo, então as colunas
+         continuam alinhadas com as das seções escuras. */
+      --regua-linha: rgba(5, 7, 11, 0.06);
 
       background-color: var(--branco);
       /* O mesmo ruído do resto da página: o PNG tem 6,7% de alfa, então sobre
          o branco ele texturiza de leve em vez de sujar. */
-      background-image: url("assets/noise.png");
-      background-size: 200px 200px;
+      background-image: var(--reguas), url("assets/noise.png");
+      background-size: auto, 200px 200px;
       color: #16202F;
       border-block: 1px solid rgba(5, 7, 11, 0.1);
     }
@@ -1044,10 +1084,13 @@
       gap: 10px;
     }
 
+    /* Serve para os dois casos: com foto do cliente, vira moldura da imagem;
+       sem foto, continua sendo o disco com as iniciais. */
     .proof__avatar {
       width: 36px;
       height: 36px;
       border-radius: 50%;
+      overflow: hidden;
       background: var(--surface-raised);
       border: 1px solid var(--ciano-line);
       display: grid;
@@ -1056,6 +1099,13 @@
       font-size: 14px;
       font-weight: 800;
       color: var(--ciano);
+      flex: none;
+    }
+
+    .proof__avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .proof__who {
@@ -1934,10 +1984,13 @@
       margin-bottom: 18px;
     }
 
+    /* Como o .proof__avatar: com foto vira moldura, sem foto fica o disco
+       com as iniciais. */
     .case__avatar {
       width: 48px;
       height: 48px;
       border-radius: 50%;
+      overflow: hidden;
       border: 1px solid var(--ciano-line);
       background: var(--surface-raised);
       display: grid;
@@ -1946,6 +1999,13 @@
       font-size: 17px;
       font-weight: 800;
       color: var(--ciano);
+      flex: none;
+    }
+
+    .case__avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
 
     .case__name {
@@ -2338,7 +2398,7 @@
             <use href="#icon-nfc" />
           </svg></span>
         <span class="brand__word">
-          <strong>TapFlow</strong>
+          <strong>TapLab</strong>
           <span>Placas NFC</span>
         </span>
       </a>
@@ -2377,8 +2437,8 @@
 
   <main id="top">
 
-    <!-- A grade cobre so o hero. Esteira, faixa de publico e depoimentos
-         ficam fora dela, num bloco escuro proprio. -->
+    <!-- As réguas verticais cobrem só o hero. Esteira, faixa de público e
+         depoimentos ficam fora delas, num bloco escuro próprio. -->
     <div class="topo">
 
     <section class="hero">
@@ -2429,7 +2489,13 @@
          apareceria risco duplo no meio do bloco. -->
     <div class="prova">
 
-      <div class="container splitbar">
+      <!-- Esteira de nichos: oculta por enquanto (hidden). O hidden vai aqui,
+           e não no .prova: o .prova é o bloco inteiro — esteira, faixa de
+           público e depoimentos —, então escondê-lo derrubaria os três.
+           A barra fixa de compra usava o fim desta esteira como gatilho; o JS
+           lá embaixo cai no gatilho reserva (70% da altura da tela) enquanto
+           ela estiver escondida. -->
+      <div class="container splitbar" hidden>
         <p class="splitbar__label">Os comércios que já compram placa NFC na sua cidade</p>
         <div class="splitbar__scroller">
           <div class="splitbar__track">
@@ -2525,26 +2591,61 @@
 
     <section class="audience">
       <div class="container">
-        <p class="audience__label">Feito pra quem quer montar a operação do zero — ou somar num negócio que já roda:</p>
-        <div class="audience__row">
-          <span>Renda extra</span>
-          <span>Designer freelancer</span>
-          <span>Gráfica rápida</span>
-          <span>Social media</span>
-          <span>Assistência técnica</span>
-          <span>Vendedor online</span>
-          <span>Representante</span>
-        </div>
+        <p class="eyebrow">Pra quem é</p>
+        <p class="audience__lede">Serve pra montar a operação do zero — e serve pra somar numa coisa que você
+          já faz.</p>
+
+        <ul class="audience__list">
+          <li class="audience__item">
+            <span class="audience__num">01</span>
+            <span class="audience__role">Renda extra</span>
+            <span class="audience__note">a primeira placa sai da mesa da sua casa</span>
+          </li>
+          <li class="audience__item">
+            <span class="audience__num">02</span>
+            <span class="audience__role">Designer freelancer</span>
+            <span class="audience__note">entra na proposta que você já manda</span>
+          </li>
+          <li class="audience__item">
+            <span class="audience__num">03</span>
+            <span class="audience__role">Gráfica rápida</span>
+            <span class="audience__note">mais um item no balcão, pro mesmo cliente</span>
+          </li>
+          <li class="audience__item">
+            <span class="audience__num">04</span>
+            <span class="audience__role">Social media</span>
+            <span class="audience__note">quem você gerencia quer avaliação no Google</span>
+          </li>
+          <li class="audience__item">
+            <span class="audience__num">05</span>
+            <span class="audience__role">Assistência técnica</span>
+            <span class="audience__note">mesma bancada, mesmo público de balcão</span>
+          </li>
+          <li class="audience__item">
+            <span class="audience__num">06</span>
+            <span class="audience__role">Vendedor online</span>
+            <span class="audience__note">leve, fino e barato de despachar</span>
+          </li>
+          <li class="audience__item">
+            <span class="audience__num">07</span>
+            <span class="audience__role">Representante</span>
+            <span class="audience__note">amostra no bolso, demonstra em um toque</span>
+          </li>
+        </ul>
       </div>
     </section>
 
     <!-- ======================================================================
-         PLACEHOLDER — PROVA SOCIAL
-         Estes prints são fictícios e existem só para segurar o layout.
-         Troque por conversas reais de quem comprou antes de publicar.
-         Se houver telefone de terceiro no print, cubra antes (LGPD).
+         PROVA SOCIAL — oculta por enquanto (hidden)
+         Rafael Souza, Juliana Martins e Patrícia Alves são clientes reais,
+         com foto autorizada. O QUE AINDA É DE EXEMPLO: as falas e os números
+         dos cards da Juliana e da Patrícia, e o card inteiro do Diego C. —
+         nome, frase e foto. Por isso a seção está oculta: prova social
+         inventada é propaganda enganosa. Tire o hidden quando os quatro
+         cards forem conversas reais de quem comprou. Se houver telefone de
+         terceiro no print, cubra antes (LGPD).
          ====================================================================== -->
-    <section class="section section--tight" id="depoimentos">
+    <section class="section section--tight" id="depoimentos" hidden>
       <div class="container">
         <div class="section__head" data-reveal>
           <p class="eyebrow">Conversas reais</p>
@@ -2554,9 +2655,10 @@
         <div class="proofs__track" data-proofs-track>
           <article class="proof">
             <div class="proof__head">
-              <span class="proof__avatar">RS</span>
+              <span class="proof__avatar"><img src="assets/images/avatar-rafael.webp" width="160" height="160"
+                  loading="lazy" decoding="async" alt="Rafael Souza"></span>
               <div>
-                <p class="proof__who">Rafael S.</p>
+                <p class="proof__who">Rafael Souza</p>
                 <p class="proof__when">Semana 2</p>
               </div>
             </div>
@@ -2567,9 +2669,10 @@
 
           <article class="proof">
             <div class="proof__head">
-              <span class="proof__avatar">JM</span>
+              <span class="proof__avatar"><img src="assets/images/avatar-juliana.webp" width="160" height="160"
+                  loading="lazy" decoding="async" alt="Juliana Martins"></span>
               <div>
-                <p class="proof__who">Juliana M.</p>
+                <p class="proof__who">Juliana Martins</p>
                 <p class="proof__when">Semana 5</p>
               </div>
             </div>
@@ -2593,9 +2696,10 @@
 
           <article class="proof">
             <div class="proof__head">
-              <span class="proof__avatar">PA</span>
+              <span class="proof__avatar"><img src="assets/images/avatar-patricia.webp" width="160" height="160"
+                  loading="lazy" decoding="async" alt="Patrícia Alves"></span>
               <div>
-                <p class="proof__who">Patrícia A.</p>
+                <p class="proof__who">Patrícia Alves</p>
                 <p class="proof__when">Semana 12</p>
               </div>
             </div>
@@ -2618,26 +2722,20 @@
         <div class="section__head section__head--center" data-reveal>
           <p class="eyebrow">Os materiais</p>
           <h2 class="section-title" style="max-width:20ch; margin-inline:auto;">Escolha por onde <em>começar</em></h2>
-          <p class="lede">Um te ensina a produzir a placa. O outro te ensina a vender. Ou leve tudo — com os bônus e
-            o grupo — no Pacote Completo.</p>
+          <p class="lede">Um te ensina a produzir a placa. O outro te ensina a vender.</p>
         </div>
 
         <div class="offer-grid" data-reveal>
           <div class="offer-card">
             <div class="offer-card__media">
-              <!-- Troque por assets/images/mockup-guia.jpg quando tiver o mockup -->
-              <div class="media-holder">
-                <svg class="icon">
-                  <use href="#icon-file" />
-                </svg>
-                <span>Guia da Placa NFC · PDF</span>
-              </div>
+              <img src="assets/images/1oferta.webp" width="1586" height="992" loading="lazy" decoding="async"
+                alt="Capa do Guia da Placa NFC ao lado de uma placa NFC sendo lida por um celular, que mostra “NFC detectado”.">
             </div>
             <p class="offer-card__label">Pra entender e produzir</p>
             <h3 class="offer-card__title">Guia da Placa NFC</h3>
             <p class="offer-card__subtitle">62 páginas · PDF digital</p>
             <div class="offer-card__price">
-              <span class="amount">R$ 19,00</span>
+              <span class="amount">R$ 30,00</span>
               <span class="terms">pagamento único</span>
             </div>
             <p class="offer-card__desc">A parte técnica inteira: que tag comprar, como gravar o link, como montar a
@@ -2659,8 +2757,8 @@
                   <use href="#icon-check" />
                 </svg>Os 7 erros que queimam a tag — e como testar antes de entregar</li>
             </ul>
-            <a href="#" class="btn btn--primary btn--block" target="_blank" rel="noopener" data-checkout-placeholder
-              data-checkout="Guia da Placa NFC" data-sku="guia-nfc" data-price="19.00">Quero o Guia — R$19</a>
+            <a href="https://pay.cakto.com.br/hhu6ktq_1126947" class="btn btn--primary btn--block" target="_blank" rel="noopener"
+              data-checkout="Guia da Placa NFC" data-sku="guia-nfc" data-price="30.00">Quero o Guia — R$30</a>
             <p class="trust-line"><svg class="icon">
                 <use href="#icon-shield" />
               </svg>Pagamento único · Acesso imediato · 7 dias de garantia</p>
@@ -2669,19 +2767,14 @@
           <div class="offer-card offer-card--featured">
             <span class="offer-card__badge">Mais completo</span>
             <div class="offer-card__media">
-              <!-- Troque por assets/images/mockup-metodo.jpg -->
-              <div class="media-holder">
-                <svg class="icon">
-                  <use href="#icon-target" />
-                </svg>
-                <span>Método TapFlow · PDF + planilhas</span>
-              </div>
+              <img src="assets/images/2oferta.webp" width="1586" height="992" loading="lazy" decoding="async"
+                alt="Capa do Método TapLab ao lado das planilhas de planejamento de produção e de controle de vendas e de uma placa NFC.">
             </div>
             <p class="offer-card__label">Pra produzir e vender</p>
-            <h3 class="offer-card__title">Método TapFlow</h3>
+            <h3 class="offer-card__title">Método TapLab</h3>
             <p class="offer-card__subtitle">Produção + venda · acesso imediato</p>
             <div class="offer-card__price">
-              <span class="amount">R$ 47,00</span>
+              <span class="amount">R$ 50,00</span>
               <span class="terms">pagamento único</span>
               <span class="offer-card__per">se paga na primeira placa vendida</span>
             </div>
@@ -2752,119 +2845,11 @@
             </ul>
             <button type="button" class="offer-card__more" data-bullets-toggle aria-controls="bulletsMetodo"
               aria-expanded="false">Ver tudo que vem no método</button>
-            <a href="#" class="btn btn--primary btn--block" target="_blank" rel="noopener" data-checkout-placeholder
-              data-checkout="Método TapFlow" data-sku="metodo-tapflow" data-price="47.00">Quero o Método — R$47</a>
+            <a href="https://pay.cakto.com.br/o5k9246_1127222" class="btn btn--primary btn--block" target="_blank" rel="noopener"
+              data-checkout="Método TapLab" data-sku="metodo-taplab" data-price="50.00">Quero o Método — R$50</a>
             <p class="trust-line"><svg class="icon">
                 <use href="#icon-shield" />
               </svg>Pagamento único · Acesso imediato · 7 dias de garantia</p>
-          </div>
-        </div>
-
-        <!-- Pacote Completo. O prazo e as vagas ficam declarados em atributos
-             (data-deadline, data-restantes) para existir um lugar só onde
-             mexer: o JS lá embaixo lê daqui, e some com a faixa quando o prazo
-             passa. Ajuste data-restantes conforme as vendas reais. -->
-        <div class="offer-bundle" data-reveal>
-          <div class="offer-bundle__urgency-bar" data-bundle-urgency data-deadline="2026-09-30T23:59:59-03:00">
-            <span class="offer-bundle__urgency-badge">
-              <span class="offer-bundle__pulse-dot"></span>
-              Preço de lote até 30/09
-            </span>
-
-            <div class="bundle-countdown" data-bundle-countdown>
-              <span class="bundle-countdown__label">Encerra em</span>
-              <div class="bundle-countdown__slots">
-                <span class="bundle-countdown__slot"><b data-cd="dias">--</b><i>dias</i></span>
-                <span class="bundle-countdown__slot"><b data-cd="horas">--</b><i>horas</i></span>
-                <span class="bundle-countdown__slot"><b data-cd="min">--</b><i>min</i></span>
-                <span class="bundle-countdown__slot"><b data-cd="seg">--</b><i>seg</i></span>
-              </div>
-            </div>
-
-            <div class="bundle-slots" data-bundle-slots data-total="30" data-restantes="30">
-              <p class="bundle-slots__text"><span data-slots-verb>Restam</span> <strong data-slots-left>30</strong> de
-                <span data-slots-total>30</span> vagas
-              </p>
-              <span class="bundle-slots__meter"><i data-slots-meter style="width:100%"></i></span>
-            </div>
-          </div>
-
-          <div class="offer-bundle__copy">
-            <p class="eyebrow">Preço de lote · até 30/09</p>
-            <h3 class="offer-bundle__title">Pacote Completo — a operação inteira</h3>
-            <p class="offer-bundle__desc">Tudo que você precisa pra sair produzindo e vendendo na mesma semana: a
-              parte técnica, o método de venda, as artes prontas e o grupo pra tirar dúvida. Depois de 30/09 o valor
-              volta ao normal.</p>
-            <ul class="offer-bundle__bullets">
-              <li><svg class="icon">
-                  <use href="#icon-check" />
-                </svg><span><strong>Método TapFlow</strong> — produção, precificação e venda</span></li>
-              <li><svg class="icon">
-                  <use href="#icon-check" />
-                </svg><span><strong>Guia da Placa NFC</strong> — 62 páginas da parte técnica</span></li>
-              <li><svg class="icon">
-                  <use href="#icon-check" />
-                </svg><span><strong>Bônus: Pack de artes editáveis</strong> — 30 layouts no Canva, um pra cada
-                  nicho</span></li>
-              <li><svg class="icon">
-                  <use href="#icon-check" />
-                </svg><span><strong>Bônus: Planilha de precificação</strong> — digite o custo, ela devolve os três
-                  preços</span></li>
-              <li><svg class="icon">
-                  <use href="#icon-check" />
-                </svg><span><strong>Bônus: Fornecedores conferidos</strong> — lista com link, prazo e preço por
-                  faixa</span></li>
-              <li><svg class="icon">
-                  <use href="#icon-check" />
-                </svg><span><strong>Grupo no WhatsApp</strong> — tira-dúvidas e os pedidos que aparecem no
-                  grupo</span></li>
-            </ul>
-
-            <div class="bundle-stack">
-              <p class="bundle-stack__label">5 materiais · um acesso só</p>
-              <div class="bundle-stack__row">
-                <figure class="bundle-stack__item">
-                  <svg class="icon">
-                    <use href="#icon-target" />
-                  </svg>
-                  <figcaption>Método TapFlow</figcaption>
-                </figure>
-                <figure class="bundle-stack__item">
-                  <svg class="icon">
-                    <use href="#icon-file" />
-                  </svg>
-                  <figcaption>Guia da Placa</figcaption>
-                </figure>
-                <figure class="bundle-stack__item">
-                  <svg class="icon">
-                    <use href="#icon-image" />
-                  </svg>
-                  <figcaption>30 artes no Canva</figcaption>
-                </figure>
-                <figure class="bundle-stack__item">
-                  <svg class="icon">
-                    <use href="#icon-tag" />
-                  </svg>
-                  <figcaption>Planilha de preço</figcaption>
-                </figure>
-              </div>
-            </div>
-          </div>
-
-          <div class="offer-bundle__buy">
-            <p class="offer-bundle__buy-label">Pacote Completo</p>
-            <div class="offer-bundle__price">
-              <span class="was">de <s>R$ 127,00</s></span>
-              <span class="amount">R$ 67</span>
-              <span class="terms">pagamento único · acesso vitalício</span>
-              <span class="per">≈ 1 placa vendida paga tudo</span>
-            </div>
-            <a href="#" class="btn btn--primary btn--block btn--bundle" target="_blank" rel="noopener"
-              data-checkout-placeholder data-checkout="Pacote Completo" data-sku="pacote-completo"
-              data-price="67.00">Garantir minha vaga</a>
-            <p class="trust-line"><svg class="icon">
-                <use href="#icon-shield" />
-              </svg>7 dias de garantia · devolução sem pergunta</p>
           </div>
         </div>
       </div>
@@ -2901,10 +2886,10 @@
           <p class="eyebrow">Os materiais</p>
           <h2 class="cta-strip__title">A primeira placa vendida já paga o método inteiro.</h2>
           <div class="cta-strip__actions">
-            <a href="#" class="btn btn--primary" target="_blank" rel="noopener" data-checkout-placeholder
-              data-checkout="Método TapFlow" data-sku="metodo-tapflow" data-price="47.00">Quero o Método — R$47</a>
-            <a href="#" class="btn btn--ghost" target="_blank" rel="noopener" data-checkout-placeholder
-              data-checkout="Guia da Placa NFC" data-sku="guia-nfc" data-price="19.00">Só o Guia — R$19</a>
+            <a href="https://pay.cakto.com.br/o5k9246_1127222" class="btn btn--primary" target="_blank" rel="noopener"
+              data-checkout="Método TapLab" data-sku="metodo-taplab" data-price="50.00">Quero o Método — R$50</a>
+            <a href="https://pay.cakto.com.br/hhu6ktq_1126947" class="btn btn--ghost" target="_blank" rel="noopener"
+              data-checkout="Guia da Placa NFC" data-sku="guia-nfc" data-price="30.00">Só o Guia — R$30</a>
           </div>
           <p class="trust-line"><svg class="icon">
               <use href="#icon-shield" />
@@ -2985,10 +2970,12 @@
 
     <!-- ======================================================================
          PLACEHOLDER — ESPECIALISTA
-         Substituir por quem de fato assina o material: nome, foto, histórico
+         Oculta por enquanto (hidden): está inteira em placeholder e prova
+         social inventada é propaganda enganosa. Tire o hidden depois de
+         substituir por quem de fato assina o material: nome, foto, histórico
          verdadeiro e uma frase dita por essa pessoa.
          ====================================================================== -->
-    <section class="section section--navy" id="expert">
+    <section class="section section--navy" id="expert" hidden>
       <div class="container">
         <div class="section__head" data-reveal>
           <p class="eyebrow">Quem assina o material</p>
@@ -3027,9 +3014,11 @@
     </section>
 
     <!-- ======================================================================
-         PLACEHOLDER — CASES
-         Três histórias fictícias, aqui só para segurar o layout. Trocar por
-         alunos reais, com autorização de uso de nome e imagem.
+         CASES
+         Nome e foto do Rafael Souza, da Juliana Martins e da Patrícia Alves
+         são reais, com autorização de uso de imagem. Os NÚMEROS E AS FALAS
+         de cada história ainda são os de exemplo — confira um por um contra
+         o que cada pessoa de fato fez antes de publicar.
          ====================================================================== -->
     <section class="section" id="cases">
       <div class="container">
@@ -3042,7 +3031,8 @@
         <div class="case" data-reveal>
           <div class="case__copy">
             <div class="case__avatar-wrap">
-              <span class="case__avatar">RS</span>
+              <span class="case__avatar"><img src="assets/images/avatar-rafael.webp" width="160" height="160"
+                  loading="lazy" decoding="async" alt="Rafael Souza"></span>
               <div>
                 <p class="case__name">Rafael Souza</p>
                 <p class="eyebrow" style="margin:0;">Começou do zero · 2 meses</p>
@@ -3080,7 +3070,8 @@
         <div class="case case--reverse" data-reveal>
           <div class="case__copy">
             <div class="case__avatar-wrap">
-              <span class="case__avatar">JM</span>
+              <span class="case__avatar"><img src="assets/images/avatar-juliana.webp" width="160" height="160"
+                  loading="lazy" decoding="async" alt="Juliana Martins"></span>
               <div>
                 <p class="case__name">Juliana Martins</p>
                 <p class="eyebrow" style="margin:0;">Social media · 3 meses</p>
@@ -3118,7 +3109,8 @@
         <div class="case" data-reveal>
           <div class="case__copy">
             <div class="case__avatar-wrap">
-              <span class="case__avatar">PA</span>
+              <span class="case__avatar"><img src="assets/images/avatar-patricia.webp" width="160" height="160"
+                  loading="lazy" decoding="async" alt="Patrícia Alves"></span>
               <div>
                 <p class="case__name">Patrícia Alves</p>
                 <p class="eyebrow" style="margin:0;">Renda extra · 4 meses</p>
@@ -3220,9 +3212,8 @@
           <p class="lede" style="margin-inline:auto;">O material chega no e-mail agora. O que você faz no sábado é
             com você.</p>
           <div class="cta-section__actions">
-            <a href="#" class="btn btn--primary" target="_blank" rel="noopener" data-checkout-placeholder
-              data-checkout="Pacote Completo" data-sku="pacote-completo" data-price="67.00">Quero o Pacote Completo —
-              R$67</a>
+            <a href="https://pay.cakto.com.br/o5k9246_1127222" class="btn btn--primary" target="_blank" rel="noopener"
+              data-checkout="Método TapLab" data-sku="metodo-taplab" data-price="50.00">Quero o Método — R$50</a>
             <a href="#oferta" class="btn btn--ghost">Comparar os materiais</a>
           </div>
           <p class="trust-line"><svg class="icon">
@@ -3235,22 +3226,22 @@
   </main>
 
   <!-- Barra de compra fixa: só aparece no celular, onde o botão do header
-       some. Oferece o Pacote enquanto o lote vale; passado o data-deadline da
-       faixa de urgência, o JS troca pelo Método (dados em data-fallback-*). -->
-  <div class="buybar" id="buyBar" data-fallback-name="Método TapFlow" data-fallback-price="R$ 47,00"
-    data-fallback-per="acesso imediato" data-fallback-href="#" data-fallback-checkout="Método TapFlow"
-    data-fallback-sku="metodo-tapflow" data-fallback-value="47.00" data-fallback-label="Quero o método">
+       some. Enquanto o Pacote Completo está fora do ar, ela oferece o Método.
+       O JS que trocava a oferta no fim do lote fica inerte sem a faixa de
+       urgência; os data-fallback-* voltam junto com o Pacote. -->
+  <div class="buybar" id="buyBar">
     <div class="buybar__info">
-      <span class="buybar__name" data-buybar-name>Pacote · até 30/09</span>
-      <span class="buybar__price"><span data-buybar-price>R$ 67,00</span> <em data-buybar-per>vitalício</em></span>
+      <span class="buybar__name" data-buybar-name>Método TapLab</span>
+      <span class="buybar__price"><span data-buybar-price>R$ 50,00</span> <em data-buybar-per>acesso
+          imediato</em></span>
     </div>
-    <a href="#" class="btn btn--primary buybar__btn" target="_blank" rel="noopener" data-checkout-placeholder
-      data-checkout="Pacote Completo" data-sku="pacote-completo" data-price="67.00" data-buybar-btn>Garantir vaga</a>
+    <a href="https://pay.cakto.com.br/o5k9246_1127222" class="btn btn--primary buybar__btn" target="_blank" rel="noopener"
+      data-checkout="Método TapLab" data-sku="metodo-taplab" data-price="50.00" data-buybar-btn>Quero o método</a>
   </div>
 
   <footer class="site-footer">
     <div class="container">
-      <p>TapFlow · Material digital sobre produção e venda de placas NFC. Os valores citados são referências de custo
+      <p>TapLab · Material digital sobre produção e venda de placas NFC. Os valores citados são referências de custo
         e de preço praticado no mercado, não promessa de faturamento. O resultado depende do seu trabalho.</p>
       <ul class="site-footer__links">
         <li><a href="#oferta">Materiais</a></li>
@@ -3541,8 +3532,13 @@
       var atualizar = function () {
         pendente = false;
 
-        var passouDoHero = gatilho
-          ? gatilho.getBoundingClientRect().bottom < 0
+        /* Com a esteira oculta o getBoundingClientRect devolve tudo zerado,
+           e "0 < 0" é falso pra sempre: a barra nunca apareceria. Por isso o
+           teste é pela altura medida, não pela existência do elemento. */
+        var caixa = gatilho ? gatilho.getBoundingClientRect() : null;
+
+        var passouDoHero = (caixa && caixa.height)
+          ? caixa.bottom < 0
           : window.scrollY > window.innerHeight * 0.7;
 
         /* Dentro da oferta os botões de verdade já estão na frente da
@@ -3606,7 +3602,7 @@
 
       if (pendentes.length) {
         console.warn(
-          '[TapFlow] ' + pendentes.length + ' botões de compra ainda estão sem link de checkout. ' +
+          '[TapLab] ' + pendentes.length + ' botões de compra ainda estão sem link de checkout. ' +
           'Busque por data-checkout-placeholder no index.html e troque o href.'
         );
       }
