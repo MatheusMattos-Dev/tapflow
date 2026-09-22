@@ -215,13 +215,13 @@ O texto "até 30/09" aparece em três lugares e é escrito à mão — ajuste ju
 visitante**, guardado no navegador de quem clicou: sem backend, o próximo
 visitante começa de novo no total declarado. Nunca chega a zero.
 
-**6. Preços.** São placeholders: R$ 19 (Guia), R$ 47 (Método), R$ 67 (Pacote,
-de R$ 127). Cada botão repete o valor em `data-price` para o rastreio — trocar
-o preço exige trocar os dois.
+**6. Preços.** R$ 29,90 (Guia) e R$ 49,90 (Método). O Pacote Completo saiu da
+página. Cada botão repete o valor em `data-price` para o rastreio — trocar o
+preço exige trocar os dois, e ainda o valor do produto na Cakto.
 
-**7. Imagens.** Os mockups dos produtos e a foto do especialista são blocos
-`.media-holder` com ícone e legenda. Substitua por `<img>` apontando para
-`assets/images/`.
+**7. Imagens.** Os mockups dos dois produtos já são os definitivos
+(`1oferta.webp` e `2oferta.webp`). O que ainda é `.media-holder` com ícone e
+legenda é a foto do especialista, na seção que está `hidden`.
 
 ## Comportamento
 
